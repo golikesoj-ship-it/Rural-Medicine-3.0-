@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deck 2: Market Size & Capital Flows</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .slide-counter {
+            color: #ccc;
+            font-size: 14px;
+            min-width: 60px;
+            text-align: right;
+        }
+        button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        button:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.6);
+        }
+        button.active {
+            background: rgba(255,255,255,0.4);
+            border-color: white;
+        }
+        .slide-container {
+            padding: 60px;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 30px;
+            line-height: 1.3;
+        }
+        .slide-body {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #333;
+            margin-bottom: 40px;
+            flex-grow: 1;
+        }
+        .slide-body p {
+            margin-bottom: 16px;
+        }
+        .slide-body ul, .slide-body ol {
+            margin-left: 20px;
+            margin-bottom: 16px;
+        }
+        .slide-body li {
+            margin-bottom: 10px;
+        }
+        .slide-body strong {
+            font-weight: 600;
+            color: #1e3c72;
+        }
+        .slide-body em {
+            font-style: italic;
+            color: #555;
+        }
+        .chart-placeholder {
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            color: #888;
+            font-style: italic;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 15px;
+        }
+        .data-table th {
+            background: #e8f4f8;
+            border-bottom: 2px solid #2a5298;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #1e3c72;
+        }
+        .data-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .data-table tr:hover {
+            background: #f9f9f9;
+        }
+        .speaker-notes {
+            display: none;
+            background: #f9f9f9;
+            border-top: 1px solid #e0e0e0;
+            padding: 20px;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .speaker-notes.visible {
+            display: block;
+        }
+        .speaker-notes h4 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .speaker-notes p {
+            margin-bottom: 12px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: #fafafa;
+            border-top: 1px solid #e0e0e0;
+        }
+        .nav-button {
+            background: #1e3c72;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .nav-button:hover:not(:disabled) {
+            background: #2a5298;
+        }
+        .nav-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .slide-progress {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+        .progress-bar {
+            width: 200px;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin: 10px auto;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #2a5298;
+            transition: width 0.3s;
+        }
+        .section-break {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 600px;
+        }
+        .section-break h2 {
+            font-size: 48px;
+            font-weight: 700;
+        }
+        .callout {
+            background: #e8f4f8;
+            border-left: 4px solid #2a5298;
+            padding: 16px;
+            margin: 20px 0;
+        }
+        .callout p {
+            margin: 0;
+            font-weight: 500;
+            color: #1e3c72;
+        }
+        .metric {
+            background: #f5f5f5;
+            border-left: 4px solid #2a5298;
+            padding: 12px;
+            margin: 10px 0;
+            font-weight: 600;
+            color: #1e3c72;
+        }
+        @media (max-width: 768px) {
+            .slide-container {
+                padding: 40px;
+            }
+            .slide-title {
+                font-size: 28px;
+            }
+            .slide-body {
+                font-size: 14px;
+            }
+            .navigation {
+                padding: 20px 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Deck 2: Market Size & Capital Flows</h1>
+            <div class="header-controls">
+                <button id="toggleNotes" class="active">👁 Notes</button>
+                <div class="slide-counter">
+                    <span id="slideNumber">1</span> / <span id="totalSlides">18</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="slidesContainer"></div>
+
+        <div class="navigation">
+            <button class="nav-button" id="prevBtn" onclick="previousSlide()">← Previous</button>
+            <div class="slide-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 5.6%"></div>
+                </div>
+                <div id="progressText">Slide 1 of 18</div>
+            </div>
+            <button class="nav-button" id="nextBtn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        const slides = [
+            {
+                title: "Deck 2: Market Size & Capital Flows",
+                subtitle: "Sections 3–4: Where the money is and how it's allocated",
+                body: "<p style='font-size: 20px; color: #666; margin-top: 60px;'>This deck quantifies the longevity market from two angles: (1) top-down market forecasts and the macro wellness envelope that longevity sits within, and (2) bottom-up funding patterns showing where institutional capital is actually flowing. Together, these paint a picture of a real but narrow market, heavily concentrated in therapeutics and platforms.</p>",
+                notes: "Deck 2 builds on Deck 1's framing by providing concrete numbers: market sizes, growth rates, funding allocation by category and stage, and geographic concentration. The key message is that the longevity market is visible by dollars but shallow by company count, and capital is flowing to the upstream (therapeutics, platforms) not the downstream (clinics, consumer services, biomarkers). This funding skew will shape the discussion of failure patterns (Deck 4) and the playbooks (Deck 5)."
+            },
+            {
+                title: "3.1 The Macro Envelope: Wellness and Healthy Aging",
+                body: `<p>The longevity market does not exist in isolation. It draws attention and spending from a much larger wellness and prevention envelope, which has continued to expand post-pandemic.</p>
+
+<p><strong>Global wellness economy:</strong></p>
+<ul>
+<li>Reached about <strong>$6.8 trillion in 2024</strong></li>
+<li>Has doubled in size since 2013</li>
+<li>Projected to reach nearly <strong>$9.8 trillion by 2029</strong>, growing at roughly <strong>7.6% annually</strong></li>
+</ul>
+
+<p><strong>Within this envelope, natural "home budgets" for longevity include:</strong></p>
+<ul>
+<li>Public health, prevention, and personalized medicine: ~<strong>$676B in 2024</strong></li>
+<li>Healthy eating, nutrition, and weight loss: roughly <strong>$1T</strong></li>
+<li>Mental wellness: about <strong>$268B in 2024</strong>, growing at <strong>>10% annually</strong></li>
+<li>Physical activity: above <strong>$1.1T</strong> with steady growth</li>
+</ul>
+
+<p><strong>Addressable market for longevity:</strong> $2–3 trillion by the late 2020s, combining prevention/personalized medicine, mental wellness, a share of healthy eating/nutrition, and a fraction of physical activity and employer health spend.</p>`,
+                notes: "The key insight here is that longevity doesn't need to create entirely new demand. There's $2–3 trillion of spend in prevention and wellness that could be reframed as longevity/healthspan investment. This is crucial for thinking about underserved populations—they already have wellness budgets; the question is how to make longevity offerings compete for that existing spend rather than requiring entirely new demand."
+            },
+            {
+                title: "3.2 Longevity Therapeutics and Platforms: Core Market Sizes",
+                body: `<p><strong>Two longitudinal estimates provide the starting point for longevity-specific markets:</strong></p>
+
+<div class='metric'>
+<p>1. Longevity biotech drug market</p>
+<p>Global longevity biotech drug market (senolytics, NAD+ modulators, mTOR inhibitors, telomere restoration, mitochondrial rejuvenation compounds):</p>
+<ul style='list-style-type: none; margin-left: 10px;'>
+<li>• 2025: <strong>$28.4 billion</strong></li>
+<li>• 2034: <strong>$101.6 billion</strong></li>
+<li>• CAGR: <strong>15.2%</strong> (2026–2034)</li>
+</ul>
+</div>
+
+<div class='metric'>
+<p>2. Longevity biotech drug-discovery platforms</p>
+<p>AI-accelerated and multi-omics longevity discovery platforms:</p>
+<ul style='list-style-type: none; margin-left: 10px;'>
+<li>• 2025: <strong>$2.4 billion</strong></li>
+<li>• 2034: <strong>$13.1 billion</strong></li>
+<li>• CAGR: <strong>19.8%</strong></li>
+</ul>
+</div>
+
+<p><strong>Combined outlook:</strong> Therapeutics plus discovery platforms alone could represent on the order of <strong>$115 billion in annual revenue by the early-to-mid 2030s</strong>, before accounting for screening, biomarkers, and service layers.</p>`,
+                notes: "These are the most critical numbers in Deck 2. The $28.4B→$101.6B trajectory for drugs is strong growth and reflects investor conviction. Notably, the 19.8% CAGR for discovery platforms exceeds the 15.2% for drugs, suggesting investors believe platforms will capture disproportionate value. However, both forecasts are contingent on regulatory approvals and clinical evidence. For underserved populations, the key is that much of this value could create a pipeline of interventions that could theoretically integrate into primary care—but absent deliberate policy and systems design, value will remain confined to well-resourced health systems and private markets."
+            },
+            {
+                title: "3.3 Funding-Based Lens: Where Capital Is Flowing Today",
+                body: `<p><strong>Category breakdown (July 2025–June 2026):</strong></p>
+
+<table class='data-table'>
+<tr>
+<th>Category</th>
+<th>Capital</th>
+<th>Deals</th>
+<th>% of Total</th>
+</tr>
+<tr>
+<td><strong>Longevity therapeutics developers</strong></td>
+<td>$710.4M</td>
+<td>6</td>
+<td>59.3%</td>
+</tr>
+<tr>
+<td><strong>Preventive health platforms</strong></td>
+<td>$307.3M</td>
+<td>2</td>
+<td>25.7%</td>
+</tr>
+<tr>
+<td><strong>Consumer longevity brands</strong></td>
+<td>$118.2M</td>
+<td>4</td>
+<td>9.8%</td>
+</tr>
+<tr>
+<td><strong>Healthy-aging clinics</strong></td>
+<td>$42.0M</td>
+<td>5</td>
+<td>3.5%</td>
+</tr>
+<tr>
+<td><strong>Diagnostics/biomarkers</strong></td>
+<td>$19.7M</td>
+<td>2</td>
+<td>1.6%</td>
+</tr>
+</table>
+
+<p><strong>Stage mix:</strong></p>
+<ul>
+<li><strong>Seed:</strong> 6 of 19 deals (31.6%), raising ~$52M (4.3% of capital)</li>
+<li><strong>Series B:</strong> Largest single-stage dollar share (~$456M), driven by preventive-platform and therapeutics rounds</li>
+<li><strong>Series C and D+/growth equity:</strong> Contributed over $600M combined, anchored by epigenetic-reprogramming Series C and late-stage therapeutics</li>
+</ul>`,
+                notes: "This is the critical finding: therapeutics and platforms dominate capital allocation (59.3% + 25.7% = 85% of capital), while clinics, diagnostics, and consumer services are undercapitalized. Notably, clinics are formed frequently (5 deals, 26.3% of deal count) but capture only 3.5% of capital. This tells you that founders see clinic opportunity but capital markets are skeptical. The stage mix shows early-stage breadth (31.6% seed deals) but late-stage concentration (Series B+ captures 95.7% of capital)."
+            },
+            {
+                title: "3.4 Bottom-Up Archetypes and 2030 Bands (Part 1)",
+                body: `<p>Rather than precise forecasts, we provide order-of-magnitude bands for 2030 to highlight relative scale and where different layers sit.</p>
+
+<div class='metric'>
+<p><strong>1. Cellular & epigenetic reprogramming / senolytics / plasma-gene-autophagy therapeutics</strong></p>
+<p>Likely to track the broader longevity-drug projections, assuming several agents gain approval for age-linked conditions.</p>
+<p style='margin-top: 8px;'>2030 band: <strong>$30–50B</strong> in aggregate revenue across these mechanisms, concentrated in high-income markets.</p>
+</div>
+
+<div class='metric'>
+<p><strong>2. Drug-discovery and aging-biology platforms</strong></p>
+<p>Predominantly B2B (licensing, services, data).</p>
+<p style='margin-top: 8px;'>2030 band: <strong>$5–10B</strong>, consistent with the trajectory toward $13.1B by 2034.</p>
+</div>
+
+<div class='metric'>
+<p><strong>3. Early screening, imaging, and MCED</strong></p>
+<p>Dependent on regulatory approval, reimbursement, and evidence on outcomes.</p>
+<p style='margin-top: 8px;'>2030 band: <strong>High single-digit to low double-digit billions</strong>, driven by MCED adoption in some health systems and sustained demand for advanced screening among affluent segments.</p>
+</div>`,
+                notes: "These bands are directional, not precise forecasts. The therapeutics band ($30–50B) is the most confident, given market momentum. Platforms are harder to forecast because they're infrastructure; their value accrues through licensing and data services, not direct sales. Screening/MCED is contingent on regulatory and reimbursement wins, which haven't fully materialized."
+            },
+            {
+                title: "3.4 Bottom-Up Archetypes and 2030 Bands (Part 2)",
+                body: `<div class='metric'>
+<p><strong>4. Biological-age and biomarker platforms</strong></p>
+<p>Combination of DTC, clinic-embedded, and research/trial services revenue.</p>
+<p style='margin-top: 8px;'>2030 band: <strong>$2–5B</strong>, skewed toward high-income countries and platforms that secure B2B contracts.</p>
+</div>
+
+<div class='metric'>
+<p><strong>5. Metabolic and hormone optimization platforms and clinics</strong></p>
+<p>Embedded in the much larger nutrition, obesity, and hormone-health markets.</p>
+<p style='margin-top: 8px;'>2030 band: <strong>Multi-billion-dollar global segment</strong> explicitly branded as longevity, depending on employer and payor uptake.</p>
+</div>
+
+<div class='metric'>
+<p><strong>6. Biological cryopreservation and HBOT</strong></p>
+<p>Remain niche, high-margin services.</p>
+<p style='margin-top: 8px;'>2030 band: <strong>Sub-$1B to low single-digit billions</strong> combined, mostly in wealthier geographies.</p>
+</div>
+
+<div class='metric'>
+<p><strong>7. Virtual male hormone care</strong></p>
+<p>A slice of a broader digital men's-health space.</p>
+<p style='margin-top: 8px;'>2030 band: <strong>Hundreds of millions to low single-digit billions</strong>, highly sensitive to regulation and mainstream clinical acceptance.</p>
+</div>
+
+<p><strong>Key takeaway:</strong> These ranges show that therapeutics and platforms will likely dominate total market size, while many service-layer categories, though smaller, are closer to where people experience "longevity."</p>`,
+                notes: "Biomarkers are strategically important but undercapitalized relative to their role. Metabolic/hormone clinics are embedded in larger markets (obesity, nutrition), so longevity-specific revenue is hard to isolate but could be substantial. Cryo and HBOT are niche but high-margin. Virtual male hormone care is small but growing and geographically concentrated in North America. The implication: therapeutics and platforms set the narrative, but service layers are where actual engagement happens."
+            },
+            {
+                title: "3.5 Accessible Market for Underserved Populations",
+                body: `<p>For underserved settings, three constraints sharply limit accessible market size by 2030:</p>
+
+<div class='callout'>
+<p><strong>1. Payment and procurement constraints.</strong> Public and pooled payors must focus on cost-effective, high-burden interventions. High-priced longevity therapies and diagnostics will see limited, selective uptake until generic competition or strong cost-effectiveness evidence emerges.</p>
+</div>
+
+<div class='callout'>
+<p><strong>2. Infrastructure and workforce.</strong> Advanced imaging, MCED processing, HBOT, gene therapies, and reprogramming modalities require infrastructure and specialist staff absent in many rural and fragile settings.</p>
+</div>
+
+<div class='callout'>
+<p><strong>3. Cultural fit and trust.</strong> In communities where health is interpreted through faith, family, and social context, poorly integrated longevity offerings may be seen as irrelevant, alien, or emblematic of inequity.</p>
+</div>
+
+<p><strong>However, under favorable scenarios:</strong> If senolytics/autophagy/X modalities gain approvals for common NCDs, biomarker insights are translated into low-cost risk tools, and aging-biology knowledge informs standard NCD and mental-health protocols, then by 2030:</p>
+
+<ul>
+<li>A small but non-trivial portion of longevity therapeutics and platform revenues could be realized in underserved populations via public procurement and generics.</li>
+<li>A much larger share of impact could come from better targeting and adapting existing prevention and chronic-disease budgets, using aging-biology as a guidance system rather than as a separate industry.</li>
+</ul>`,
+                notes: "This section reframes the market for underserved populations. The three constraints are real: cost, infrastructure, and cultural relevance. But the opportunity is not to build a separate 'longevity for the poor' industry—it's to translate longevity insights into existing prevention and NCD budgets. This is the core of Section 10 (implications for underserved populations) and will drive the playbooks in Sections 11–12."
+            },
+            {
+                title: "Section 4: Capital Flows and Funding Patterns",
+                body: "<p style='font-size: 20px; color: #aaa; margin-top: 60px;'>Detailed analysis of how the $1.2B in pure-play longevity funding is distributed by stage, category, and geography, and what this distribution signals about market maturity and investor conviction.</p>",
+                notes: ""
+            },
+            {
+                title: "4.1 Overview: Visible by Capital, Narrow by Company Count",
+                body: `<p><strong>Between July 2025 and June 2026,</strong> pure-play longevity companies raised 19 disclosed equity rounds across 18 unique companies, totaling about <strong>$1.20B in capital</strong>.</p>
+
+<p><strong>Three features stand out:</strong></p>
+
+<div class='callout'>
+<p><strong>Extreme concentration.</strong> One Series C round in epigenetic reprogramming accounts for about <strong>36.3% of all disclosed capital</strong>. The top three deals account for roughly <strong>68.3%</strong>, and the top ten for about <strong>94.6%</strong>.</p>
+</div>
+
+<div class='callout'>
+<p><strong>Limited breadth.</strong> Only <strong>18 companies worldwide</strong> met a strict pure-play definition and raised qualifying deals in this 12-month window.</p>
+</div>
+
+<div class='callout'>
+<p><strong>Lumpy cadence.</strong> Average disclosed deal flow is <strong>1.6 rounds per month</strong>, but several months had no qualifying deals at all.</p>
+</div>
+
+<p>Taken together: <strong>this shows a market that is loud by dollars but still shallow in company depth.</strong></p>`,
+                notes: "The concentration is stunning: 36.3% from one deal means the market is heavily dependent on individual large raises. If that one Series C hadn't happened, the funding profile would look very different. The limited breadth (18 companies) underscores that this is not a broad market with hundreds of active players—it's a narrow one where most capital goes to a handful of well-known companies. The lumpy cadence suggests that deal flow is unpredictable and event-driven, not steady."
+            },
+            {
+                title: "4.2 Stage Mix: Balanced Dollars, Skewed Expectations",
+                body: `<p>The longevity funding landscape exhibits an unusual balance between early-stage formation and late-stage scaling:</p>
+
+<p><strong>By count:</strong></p>
+<ul>
+<li><strong>Seed rounds:</strong> 6 of 19 deals (31.6% of deals), but only ~$52M (~4.3% of capital)</li>
+<li><strong>Series B:</strong> Captured largest single-stage dollar share (~$456M)</li>
+<li><strong>Series C and D+/growth equity:</strong> Exceeded $600M combined</li>
+</ul>
+
+<p><strong>What this reveals:</strong></p>
+
+<div class='callout'>
+<p><strong>At early stage,</strong> longevity appears as an experimentation market: many small, uncertain plays.</p>
+</div>
+
+<div class='callout'>
+<p><strong>At later stage,</strong> it looks like a scaled-financing market: a tiny cohort of companies raising very large checks on the back of validated biology and strong narratives.</p>
+</div>
+
+<p><strong>Median round size is $18M,</strong> a more reliable benchmark for typical companies than the $63M average, which is pulled up by a few outliers.</p>`,
+                notes: "The stage mix tells you that there's broad early-stage experimentation (founders keep starting longevity companies) but capital doesn't follow proportionally. Most money goes to companies that have already de-risked their science and have strong teams. For clinic or consumer-service founders, this is particularly challenging—they're asking for growth equity checks against a skeptical investor base that prefers biological risk over service/business model risk."
+            },
+            {
+                title: "4.3 Category Allocation: Therapeutics and Platforms Dominate",
+                body: `<p><strong>Re-stating the category allocation:</strong></p>
+
+<table class='data-table'>
+<tr>
+<th>Category</th>
+<th>Capital</th>
+<th>Deals</th>
+<th>% Capital</th>
+<th>% Deals</th>
+</tr>
+<tr>
+<td><strong>Therapeutics</strong></td>
+<td>$710.4M</td>
+<td>6</td>
+<td>59.3%</td>
+<td>31.6%</td>
+</tr>
+<tr>
+<td><strong>Preventive platforms</strong></td>
+<td>$307.3M</td>
+<td>2</td>
+<td>25.7%</td>
+<td>10.5%</td>
+</tr>
+<tr>
+<td><strong>Consumer brands</strong></td>
+<td>$118.2M</td>
+<td>4</td>
+<td>9.8%</td>
+<td>21.1%</td>
+</tr>
+<tr>
+<td><strong>Healthy-aging clinics</strong></td>
+<td>$42.0M</td>
+<td>5</td>
+<td>3.5%</td>
+<td>26.3%</td>
+</tr>
+<tr>
+<td><strong>Diagnostics/biomarkers</strong></td>
+<td>$19.7M</td>
+<td>2</td>
+<td>1.6%</td>
+<td>10.5%</td>
+</tr>
+</table>
+
+<p><strong>Capital-share-to-deal-share ratios reveal investor preferences:</strong></p>
+<ul>
+<li><strong>Preventive platforms:</strong> ~10.5% of deals, 25.7% of capital (≈2.4x overweight)</li>
+<li><strong>Therapeutics:</strong> 31.6% of deals, 59.3% of capital (≈1.9x overweight)</li>
+<li><strong>Healthy-aging clinics:</strong> 26.3% of deals, 3.5% of capital (≈0.13x underweight)</li>
+</ul>
+
+<p><strong>Investors are clearly overweight scalable infrastructure and biology, underweight service-intensive models.</strong></p>`,
+                notes: "The mismatch is stark: clinics are formed frequently (26.3% of deals) but capital doesn't follow. This is a signal that founders see market opportunity, but institutional capital sees operational risk (unit economics, retention, reimbursement). Platforms and therapeutics benefit from perception of high leverage and scalability. For founders thinking about underserved populations, this is crucial: capital structures that work for therapeutics won't work for distributed clinic models."
+            },
+            {
+                title: "4.4 Geography: One Dominant Hub, Small Satellites",
+                body: `<p><strong>Geographic distribution for the 19-deal sample:</strong></p>
+
+<table class='data-table'>
+<tr>
+<th>Region</th>
+<th>Deals</th>
+<th>Capital</th>
+<th>% of Total</th>
+</tr>
+<tr>
+<td><strong>North America</strong></td>
+<td>13</td>
+<td>~$1.09B</td>
+<td>91%</td>
+</tr>
+<tr>
+<td><strong>Europe</strong></td>
+<td>3</td>
+<td>~$96M</td>
+<td>8%</td>
+</tr>
+<tr>
+<td><strong>Asia-Pacific</strong></td>
+<td>3</td>
+<td>~$11.4M</td>
+<td>1%</td>
+</tr>
+<tr>
+<td><strong>Latin America/MEA</strong></td>
+<td>0</td>
+<td>$0</td>
+<td>0%</td>
+</tr>
+</table>
+
+<p><strong>Key observation:</strong> APAC and European deals lean toward clinics, biomarker companies, and a few therapeutics; <strong>North America dominates pricing and sets norms.</strong></p>
+
+<p>This concentration creates a structural reality: most innovation energy and capital are aligned with a single hub. For underserved populations in other regions, this means longevity solutions are being designed for North American contexts (high income, digital adoption, willingness to pay) and may not port to lower-income or fragile settings without deliberate adaptation.</p>`,
+                notes: "91% of capital in North America is a critical finding. It means that most longevity innovation is designed for wealthy, high-connectivity contexts. European and especially APAC deals reflect different strategies (more clinics, more biomarkers), possibly because institutional capital structures are different or because founder teams are solving for local market conditions. For systems leaders in other regions, the implication is clear: if you wait for North American innovation to trickle down, you'll be waiting a long time."
+            },
+            {
+                title: "4.5 Investor Behavior: Few Conviction Bets",
+                body: `<p><strong>Repeat-investor patterns:</strong></p>
+
+<p>A handful of investors appear in multiple longevity deals, but repeat appearances mostly represent re-ups into a single epigenetic-reprogramming company, not broad, multi-company longevity portfolios.</p>
+
+<p>Outside this narrow window, large capital commitments into companies like <strong>Altos Labs</strong> and platform plays like <strong>BioAge</strong> underscore strong investor belief in cellular rejuvenation and AI-enabled aging-biology discovery.</p>
+
+<p><strong>Overall pattern:</strong></p>
+
+<div class='callout'>
+<p>The number of conviction bets is small, and cross-category, system-aware portfolio construction is rare.</p>
+</div>
+
+<p>What this means: Investors are not yet building longevity portfolios that span therapeutics, platforms, clinics, and biomarkers together. They're placing concentrated bets on individual companies or categories, not on the longevity ecosystem as a whole. This has implications for founders: it's hard to get capital if you're trying to build an integrated solution that spans multiple categories.</p>`,
+                notes: "The lack of conviction-bet diversity is telling. If investors really believed in the longevity thesis, we'd expect to see coordinated portfolio construction—investing in therapeutics plus biomarkers plus integration platforms. Instead, we see concentrated bets on individual companies. This fragmentation mirrors the market fragmentation itself and suggests that investors haven't yet synthesized a systems view of longevity."
+            },
+            {
+                title: "4.6 Signals for Founders",
+                body: `<p><strong>The funding data send clear signals to different founder types:</strong></p>
+
+<div class='callout'>
+<p><strong>If you are a therapeutics or AI-platform founder:</strong> There is room for large checks, but only with credible science, experienced translational talent, and clear indications.</p>
+</div>
+
+<div class='callout'>
+<p><strong>If you are a clinic or consumer-service founder:</strong> You face a structurally skeptical capital environment and must demonstrate excellent unit economics and integration with existing systems early.</p>
+</div>
+
+<div class='callout'>
+<p><strong>If you are a biomarker/platform founder:</strong> You are strategically important but under-funded; to break through, you must show actionability, fairness, and integration potential, not just novel clocks.</p>
+</div>
+
+<p><strong>For founders who care about underserved populations:</strong> The message is stark: current capital patterns will not, by themselves, produce integrated, equity-oriented models. Those must be deliberately built, and you will likely need to bootstrap, find impact capital, or partner with systems actors (health systems, governments, NGOs) rather than relying on traditional VC.</p>`,
+                notes: "This is the founder reality check. Therapeutics get capital because they promise clear ROI and regulatory milestones. Clinics and services are harder to scale and have uncertain unit economics. Biomarkers are infrastructure but don't command the same valuations as therapeutics. For founders thinking about equity and underserved populations, the VC funding game is not designed for you—you need different capital structures (grants, impact investing, government partnerships)."
+            },
+            {
+                title: "4.7 Signals for Investors and Systems Leaders",
+                body: `<p><strong>For investors:</strong></p>
+
+<div class='callout'>
+<p>The sector is still in a proof and platform-building phase, not yet a diversified, deep market. There is an opportunity—and arguably a responsibility—to back models that bridge therapeutics and infrastructure with primary-care realities, rather than only doubling down on upstream biology.</p>
+</div>
+
+<p><strong>For systems leaders and policymakers:</strong></p>
+
+<div class='callout'>
+<p>Most innovation energy and capital are currently aligned with a small set of hubs; ignoring this could mean waking up to a pipeline of high-cost interventions with limited fit for local systems.</p>
+</div>
+
+<div class='callout'>
+<p>Engaging early with platforms and biomarker companies can help shape their outputs toward primary-care-useful tools rather than purely premium services.</p>
+</div>
+
+<p><strong>The underlying message:</strong> If you are a systems actor (health system, government, international organization), you cannot wait for the longevity market to self-correct toward equity. You must actively shape it through procurement decisions, partnerships, and policy. Biomarker companies and platforms are most amenable to this influence; therapeutics are further downstream.</p>`,
+                notes: "This is the systems-level call to action. Investors have an opportunity to build convictions around integrated models. Policymakers and systems leaders need to engage now, before the pipeline solidifies into a premium-only narrative. The biomarker and platform companies are the leverage points—get them right, and you create infrastructure that can serve multiple populations. Get them wrong, and you've built a tool that only works for the wealthy."
+            },
+            {
+                title: "End of Deck 2",
+                body: "<p style='font-size: 20px; color: #999; margin-top: 80px;'>Sections 3–4 complete. Key takeaways: (1) Addressable market for longevity is $2–3T within broader wellness economy. (2) Therapeutics could grow from $28.4B to $101.6B by 2034 (15.2% CAGR); platforms from $2.4B to $13.1B (19.8% CAGR). (3) Current funding heavily skewed to therapeutics (59.3%) and platforms (25.7%); clinics undercapitalized (3.5%). (4) Capital concentrated in North America (91%) and highly concentrated across few companies. (5) For underserved populations, path forward requires deliberate integration into existing prevention/NCD budgets, not separate longevity market.</p><p style='font-size: 16px; color: #ccc; margin-top: 40px;'>Ready for Deck 3A: Category Deep Dives (Therapeutics & Screening) →</p>",
+                notes: "Deck 2 provides the quantitative foundation for understanding the market. The key numbers are now in the reader's head: $1.2B in current funding, $101.6B potential market by 2034, 91% concentration in North America, 59.3% of capital going to therapeutics. These numbers set up the deep dives in Decks 3A/3B (which will show how that funding is distributed across specific categories), the failure patterns in Deck 4, and the playbooks in Deck 5 (which will show how to navigate these capital and market constraints)."
+            }
+        ];
+
+        let currentSlide = 0;
+        let showNotes = true;
+
+        function renderSlide(index) {
+            const container = document.getElementById('slidesContainer');
+            const slide = slides[index];
+
+            let html = `
+                <div class="slide-container">
+                    <h2 class="slide-title">${slide.title}</h2>
+                    <div class="slide-body">${slide.body}</div>
+                    ${slide.notes ? `<div class="speaker-notes ${showNotes ? 'visible' : ''}">
+                        <h4>Speaker Notes</h4>
+                        <p>${slide.notes}</p>
+                    </div>` : ''}
+                </div>
+            `;
+
+            container.innerHTML = html;
+            updateNavigation();
+            updateProgress();
+        }
+
+        function updateNavigation() {
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === slides.length - 1;
+            document.getElementById('slideNumber').textContent = currentSlide + 1;
+            document.getElementById('totalSlides').textContent = slides.length;
+            document.getElementById('progressText').textContent = `Slide ${currentSlide + 1} of ${slides.length}`;
+        }
+
+        function updateProgress() {
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                renderSlide(currentSlide);
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                renderSlide(currentSlide);
+                window.scrollTo(0, 0);
+            }
+        }
+
+        document.getElementById('toggleNotes').addEventListener('click', function() {
+            showNotes = !showNotes;
+            const notes = document.querySelectorAll('.speaker-notes');
+            notes.forEach(note => {
+                if (showNotes) {
+                    note.classList.add('visible');
+                } else {
+                    note.classList.remove('visible');
+                }
+            });
+            this.classList.toggle('active');
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+        });
+
+        // Initialize
+        renderSlide(0);
+    </script>
+</body>
+</html>

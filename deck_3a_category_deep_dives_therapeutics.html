@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deck 3A: Category Deep Dives – Therapeutics & Screening</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5; padding: 20px;
+        }
+        .container {
+            max-width: 1200px; margin: 0 auto; background: white;
+            border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .header h1 { font-size: 24px; font-weight: 600; }
+        .header-controls { display: flex; gap: 10px; align-items: center; }
+        .slide-counter { color: #ccc; font-size: 14px; min-width: 60px; text-align: right; }
+        button {
+            background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4);
+            padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; transition: all 0.2s;
+        }
+        button:hover { background: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.6); }
+        button.active { background: rgba(255,255,255,0.4); border-color: white; }
+        .slide-container {
+            padding: 60px; min-height: 600px; display: flex; flex-direction: column;
+        }
+        .slide-title {
+            font-size: 36px; font-weight: 700; color: #1e3c72; margin-bottom: 30px; line-height: 1.3;
+        }
+        .slide-body {
+            font-size: 16px; line-height: 1.7; color: #333; margin-bottom: 40px; flex-grow: 1;
+        }
+        .slide-body p { margin-bottom: 16px; }
+        .slide-body ul, .slide-body ol { margin-left: 20px; margin-bottom: 16px; }
+        .slide-body li { margin-bottom: 10px; }
+        .slide-body strong { font-weight: 600; color: #1e3c72; }
+        .slide-body em { font-style: italic; color: #555; }
+        .speaker-notes {
+            display: none; background: #f9f9f9; border-top: 1px solid #e0e0e0;
+            padding: 20px; font-size: 14px; color: #666; line-height: 1.6;
+            max-height: 300px; overflow-y: auto;
+        }
+        .speaker-notes.visible { display: block; }
+        .speaker-notes h4 { color: #1e3c72; margin-bottom: 10px; font-size: 14px; }
+        .speaker-notes p { margin-bottom: 12px; }
+        .navigation {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 60px; background: #fafafa; border-top: 1px solid #e0e0e0;
+        }
+        .nav-button {
+            background: #1e3c72; color: white; border: none;
+            padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; transition: all 0.2s;
+        }
+        .nav-button:hover:not(:disabled) { background: #2a5298; }
+        .nav-button:disabled { background: #ccc; cursor: not-allowed; opacity: 0.6; }
+        .slide-progress { text-align: center; font-size: 14px; color: #666; }
+        .progress-bar {
+            width: 200px; height: 4px; background: #e0e0e0;
+            border-radius: 2px; margin: 10px auto; overflow: hidden;
+        }
+        .progress-fill { height: 100%; background: #2a5298; transition: width 0.3s; }
+        .category-title { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white; text-align: center; display: flex; align-items: center; justify-content: center;
+            min-height: 600px;
+        }
+        .category-title h2 { font-size: 48px; font-weight: 700; }
+        .callout {
+            background: #e8f4f8; border-left: 4px solid #2a5298; padding: 16px; margin: 20px 0;
+        }
+        .callout p { margin: 0; color: #1e3c72; }
+        @media (max-width: 768px) {
+            .slide-container { padding: 40px; }
+            .slide-title { font-size: 28px; }
+            .slide-body { font-size: 14px; }
+            .navigation { padding: 20px 40px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Deck 3A: Category Deep Dives – Therapeutics & Screening</h1>
+            <div class="header-controls">
+                <button id="toggleNotes" class="active">👁 Notes</button>
+                <div class="slide-counter">
+                    <span id="slideNumber">1</span> / <span id="totalSlides">68</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="slidesContainer"></div>
+
+        <div class="navigation">
+            <button class="nav-button" id="prevBtn" onclick="previousSlide()">← Previous</button>
+            <div class="slide-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 1.5%"></div>
+                </div>
+                <div id="progressText">Slide 1 of 68</div>
+            </div>
+            <button class="nav-button" id="nextBtn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        const slides = [
+            {
+                title: "Deck 3A: Category Deep Dives – Therapeutics & Screening",
+                body: "<p style='font-size: 20px; color: #666; margin-top: 60px;'>Sections 5.1–5.4: Four categories of therapeutics and diagnostic platforms that sit at the intersection of aging biology and clinical disease management.</p><p style='margin-top: 40px; color: #999;'>(1) Cellular & epigenetic reprogramming | (2) Senolytics & related therapeutics | (3) Plasma, autophagy, & gene/RNA therapeutics | (4) Early screening, imaging, & MCED</p>",
+                notes: "Deck 3A provides deep operational understanding of the therapeutic and diagnostic categories that are attracting the most capital (Section 3-4 data showed therapeutics at 59.3% of capital). Each category follows the same 6-subsection structure: definition & science, market position & funding, state of pipeline, economic profile & business models, integration with primary care/mental health, and implications for underserved populations. The core thesis throughout: direct availability for underserved populations before 2030 is limited, but indirect leverage points exist through knowledge spillovers, biomarker translation, and policy windows."
+            },
+            {
+                title: "5.1 Cellular & Epigenetic Reprogramming / Rejuvenation Therapeutics",
+                body: "",
+                notes: ""
+            },
+            {
+                title: "5.1.1 Definition and Scientific Premise",
+                body: `<p>Cellular and epigenetic reprogramming therapies aim to reset aspects of cellular age—typically at the level of epigenetic marks and transcriptional programs—without fully reverting cells to pluripotency.</p>
+
+<p><strong>The premise:</strong></p>
+<ul>
+<li>Aging is driven in part by epigenetic drift, chromatin alterations, and transcriptional noise.</li>
+<li>Carefully calibrated partial reprogramming can restore youthful gene-expression patterns and function while preserving cell identity.</li>
+<li>If achieved safely and reversibly, it could provide systemic leverage: one intervention potentially improving multiple age-related pathways and diseases.</li>
+</ul>
+
+<p><strong>Mechanistically, this category spans:</strong></p>
+<ul>
+<li>Yamanaka-factor-derived or transcription-factor combinations designed for partial reprogramming.</li>
+<li>Small-molecule and gene-therapy approaches targeting epigenetic regulators, chromatin modifiers, or DNA-repair pathways.</li>
+<li>mRNA-based or viral-vector delivery systems that aim to modulate epigenetic state in specific tissues (e.g., liver, CNS).</li>
+</ul>
+
+<p><strong>The scientific thesis is ambitious:</strong> if epigenetic age is causal enough, then shifting it back could alter disease risk and functional trajectories.</p>`,
+                notes: "This is the most technically ambitious category. The science is based on the observation that epigenetic marks drift with age, and that some of this drift is potentially reversible. The challenge is doing this selectively and safely—partial reprogramming means resetting without creating pluripotent (uncontrolled) cells. Companies pursuing this include Altos Labs, Calico, and others backed by major tech investors (Google, Amazon). The appeal: if it works, it's a platform technology applicable to many diseases."
+            },
+            {
+                title: "5.1.2 Market Position and Funding Snapshot",
+                body: `<p><strong>Within the 2025–26 funding window, cellular and epigenetic reprogramming sits at the very top of the longevity capital stack:</strong></p>
+
+<ul>
+<li>One Series C round in an epigenetic-reprogramming company alone accounts for about <strong>$435 million, or 36.3% of all pure-play longevity capital</strong> in the July 2025–June 2026 dataset.</li>
+
+<li>Across all rejuvenation- and reprogramming-focused therapeutics in the sample—combining the epigenetic reprogramming Series C and related rejuvenation companies—the segment contributes the majority of the <strong>$710.4 million raised by longevity therapeutics developers</strong> in that period.</li>
+</ul>
+
+<p><strong>Outside this narrow window, earlier years saw:</strong></p>
+<ul>
+<li>Multi-billion-dollar financings for large rejuvenation platforms (e.g., Altos Labs' ~$3B Series A in 2022).</li>
+<li>Substantial private capital flowing into other cellular rejuvenation and partial-reprogramming companies, often backed by leading technology and AI investors.</li>
+</ul>
+
+<p><strong>Market positioning:</strong> This category is positioned as a flagship bet for investors who believe aging is a tractable biological process. Capital intensity is among the highest in the longevity landscape, but so is perceived upside.</p>`,
+                notes: "The $435M Series C is the single largest deal in the longevity dataset. This concentration of capital around one company/modality is significant—it means the market is betting heavily on the epigenetic reprogramming approach. Altos Labs' $3B Series A in 2022 (from Google, Amazon, and Bezos) underscores tech industry conviction in cellular rejuvenation. For context, this is far more capital than any clinic or biomarker company has raised."
+            },
+            {
+                title: "5.1.3 State of the Pipeline",
+                body: `<p><strong>As of mid-2026, most cellular and epigenetic reprogramming programs are at:</strong></p>
+
+<ul>
+<li><strong>Preclinical or early clinical stages,</strong> with indications often framed around:
+  <ul>
+    <li>Liver disease and metabolic dysfunction</li>
+    <li>Neurodegeneration</li>
+    <li>Vision and ocular aging</li>
+    <li>Systemic frailty and musculoskeletal decline</li>
+  </ul>
+</li>
+
+<li><strong>Proof-of-concept studies</strong> in animals and small human cohorts, focusing on:
+  <ul>
+    <li>Safety of partial reprogramming (avoiding tumorigenesis and loss of cell identity)</li>
+    <li>Tissue-specific delivery</li>
+    <li>Biomarker-based evidence of epigenetic age reversal or functional rejuvenation</li>
+  </ul>
+</li>
+</ul>
+
+<p><strong>Regulatory pathways remain evolving:</strong></p>
+<ul>
+<li>Because aging per se is not recognized as a disease, most programs pursue age-linked disease indications (e.g., specific liver pathologies, neurodegenerative conditions) with aging biology as the mechanistic rationale.</li>
+<li>Regulatory initiatives such as aging-biomarker consortia and TAME-like trial frameworks for aging-targeted drugs offer early blueprints, but no clear, unified pathway exists yet.</li>
+</ul>
+
+<p><strong>Timescale:</strong> Meaningful commercial impact from this category is more likely in the 2030s than before 2030, barring unusually rapid breakthroughs.</p>`,
+                notes: "No clinical approvals yet as of mid-2026. The pipeline is still early. The regulatory challenge is real: aging is not a disease, so proving safety and efficacy specifically for 'reversing aging' is complicated. Companies are framing indications as specific diseases (liver disease, vision loss) with aging as the mechanism. The TAME (Targeting Aging with Metformin) trial framework is relevant here—it's one of the first NIH-sponsored studies explicitly treating aging as an intervention target. Meaningful data probably 2027-2029 at earliest."
+            },
+            {
+                title: "5.1.4 Economic Profile and Business Models",
+                body: `<p><strong>Economic characteristics of this category:</strong></p>
+
+<ul>
+<li><strong>High fixed costs and long timelines.</strong> Substantial R&D, preclinical, and clinical investments are required before any revenue.</li>
+
+<li><strong>Platform value.</strong> Many companies position themselves as platforms capable of generating multiple programs across indications, creating optionality but also raising expectations for pipeline breadth.</li>
+
+<li><strong>Premium early pricing.</strong> Initial indications are likely to be priced at a premium, reflecting:
+  <ul>
+    <li>High unmet need in age-related diseases</li>
+    <li>The novelty and perceived transformational potential of the modality</li>
+  </ul>
+</li>
+</ul>
+
+<p><strong>Over time, if safety and efficacy are proven, pressures from payors, competition, and generics/biosimilars could:</strong></p>
+<ul>
+<li>Drive indication expansion (from rare or severe conditions to more common age-linked diseases)</li>
+<li>Begin to reduce per-patient cost, making integration into broader health systems more plausible</li>
+</ul>`,
+                notes: "These are expensive therapies to develop. Gene therapies typically cost $100M–$500M+ to bring to market. Expect initial pricing in the tens of thousands per dose if approved. The platform narrative is critical for funding—companies pitch one or two lead programs but emphasize their ability to run multiple indications through the same platform. This justifies the high valuations and large funding rounds."
+            },
+            {
+                title: "5.1.5 Integration with Primary Care & Mental Health: Constraints (Part 1)",
+                body: `<p>In the near term, cellular and epigenetic reprogramming therapies will be specialist-driven, tertiary-care interventions. However, their practical impact for most people—including underserved populations—will depend on several factors:</p>
+
+<p><strong>1. Indication selection and trial design</strong></p>
+<ul>
+<li>If early indications focus exclusively on rare or highly specialized diseases, the path to broad primary-care impact will be slower.</li>
+<li>If at least some programs are designed around high-burden, primary-care-managed conditions (e.g., metabolic dysfunction, cardiovascular risk), the translation potential expands.</li>
+</ul>
+
+<p><strong>2. Biomarker and screening integration</strong></p>
+<ul>
+<li>These therapies will likely require sophisticated biomarkers (epigenetic clocks, imaging, functional measures) for patient selection and monitoring.</li>
+<li>Integration into primary care will depend on whether simplified, cost-effective biomarker panels can be deployed through existing lab networks in lower-resource settings.</li>
+</ul>
+
+<p><strong>3. Mental health and expectations management</strong></p>
+<ul>
+<li>The narrative of "reversing aging" can create very high expectations, especially in communities where current care for chronic disease is already inadequate.</li>
+<li>Community-based mental-health and psychosocial support structures will be critical to manage expectations, address fears and misconceptions, and support adherence.</li>
+</ul>`,
+                notes: "These are the critical integration points. Indication selection is key: if the first approved indication is age-related macular degeneration (rare, specialists only), that's different from if it's metabolic dysfunction (common, primary-care-relevant). The biomarker challenge is real—you need to know who will benefit before you give them a $100K+ therapy. And the mental health angle is often overlooked but crucial: patients told they can 'reverse aging' but then encounter cost, access, or efficacy barriers will have negative outcomes."
+            },
+            {
+                title: "5.1.5 Integration with Primary Care & Mental Health: Constraints (Part 2)",
+                body: `<p><strong>4. Delivery models</strong></p>
+<ul>
+<li>In high-income settings, these therapies will likely be delivered through specialist centers and academic medical hubs.</li>
+<li>For underserved settings, a more realistic early path is tiered delivery:
+  <ul>
+    <li>Specialist hubs performing initial interventions and complex monitoring</li>
+    <li>Primary-care teams handling follow-up, co-morbidities, and psychosocial support</li>
+    <li>Digital tools bridging the gap where physical access is limited</li>
+  </ul>
+</li>
+</ul>
+
+<p><strong>Without intentional design, the default outcome is a two-tiered system:</strong> advanced reprogramming therapies for a small, well-served minority; reactive, symptom-focused care for the majority.</p>`,
+                notes: "The tiered delivery model is realistic and important for underserved populations. It requires coordination between specialists and primary care, which most health systems don't yet have infrastructure for. The key is building that into the trial design and commercialization strategy from the start, not as an afterthought."
+            },
+            {
+                title: "5.1.6 Implications for Underserved Populations",
+                body: `<p><strong>For underserved populations, direct availability of cellular and epigenetic reprogramming therapies before 2030 is likely limited. However, three indirect leverage points exist:</strong></p>
+
+<p><strong>1. Knowledge spillovers.</strong> As the biological mechanisms of partial reprogramming become clearer, simpler interventions targeting related pathways (e.g., epigenetic drug targets, lifestyle factors that influence chromatin state) may become viable in lower-resource settings.</p>
+
+<p><strong>2. Biomarker adoption.</strong> If this category drives development of robust, cost-effective epigenetic biomarkers, those tools could inform risk stratification and monitoring in primary-care settings, independent of access to the therapy itself.</p>
+
+<p><strong>3. Policy windows.</strong> As aging becomes a recognized policy priority—especially in countries facing rapid population aging—public health systems may begin to integrate aging-biology insights into standard prevention and chronic-disease protocols, creating pathways for geroscience-informed care even without access to cutting-edge therapeutics.</p>`,
+                notes: "The realistic path forward for underserved populations is not 'cellular reprogramming for everyone' but rather: (1) benefit from the science without the specific therapy, (2) use biomarkers developed here to improve risk stratification in existing systems, and (3) advocate for policy recognition of aging biology as relevant to burden-of-disease prioritization. This requires deliberate systems thinking, not just waiting for prices to fall."
+            },
+            {
+                title: "5.2 Senolytics and Related Therapeutics",
+                body: "",
+                notes: ""
+            },
+            {
+                title: "5.2.1 Definition and Scientific Premise",
+                body: `<p><strong>Senolytics</strong> are drugs designed to selectively clear or modulate senescent cells—cells that have stopped dividing but remain metabolically active and secrete pro-inflammatory factors (senescence-associated secretory phenotype, or SASP).</p>
+
+<p><strong>The premise:</strong></p>
+<ul>
+<li>Cellular senescence accumulates with age and contributes to chronic inflammation, tissue dysfunction, and disease.</li>
+<li>Clearing senescent cells could reduce SASP-driven pathology and restore tissue function across multiple organ systems.</li>
+<li>Unlike reprogramming, which aims to reset cells, senolytics simply remove them—a simpler biological mechanism.</li>
+</ul>
+
+<p><strong>This category also includes:</strong></p>
+<ul>
+<li><strong>Senomorphics:</strong> Compounds that suppress senescence-associated secretory phenotype (SASP) without killing senescent cells.</li>
+<li><strong>Adjacent aging-pathway modulators:</strong> Drugs targeting telomere maintenance, mitochondrial rejuvenation, or other hallmarks of aging where senescence is one mechanism among several.</li>
+</ul>
+
+<p><strong>Mechanistically,</strong> senolytics work through various pathways:
+<ul>
+<li>BCL-2 inhibition (making senescent cells dependent on anti-apoptotic proteins)</li>
+<li>JAK/STAT inhibition (reducing SASP)</li>
+<li>Autophagy modulation</li>
+<li>Immune-cell-mediated senescent-cell clearance</li>
+</ul></p>`,
+                notes: "Senolytics are more mechanistically straightforward than reprogramming. The science is solid: senescent cells do accumulate with age, they do secrete inflammatory factors, and clearing them in animal models improves some outcomes. The advantage: simpler mechanism = potentially faster path to clinic. The challenge: you're removing cells, which could have unintended consequences if senescence is protective in some contexts."
+            },
+            {
+                title: "5.2.2 Market Position and Funding Snapshot",
+                body: `<p>Senolytics have attracted meaningful but smaller capital relative to cellular reprogramming:</p>
+
+<ul>
+<li>Within the July 2025–June 2026 dataset, senolytic-focused companies contributed to the broader longevity therapeutics segment (~$710.4M across 6 therapeutics deals), but are not individually dominant.</li>
+
+<li>However, earlier-stage senolytic programs have been funded by venture and strategic investors, reflecting confidence in the mechanism.</li>
+</ul>
+
+<p><strong>Market context:</strong></p>
+<ul>
+<li>Senolytic development benefits from established pharmaceutical expertise in SASP modulation (clinical trials in idiopathic pulmonary fibrosis, other inflammatory conditions).</li>
+<li>The mechanism is less speculative than reprogramming, lowering perceived risk.</li>
+<li>Small existing clinical experience with senolytic compounds (e.g., dasatinib, quercetin combinations in early trials) provides proof-of-concept.</li>
+</ul>
+
+<p><strong>Compared to cellular reprogramming,</strong> senolytics may face faster paths to approval for specific indications, especially age-related conditions with strong senescence components (frailty, cardiovascular disease, fibrosis).</p>`,
+                notes: "Senolytics are less capital-intensive than cellular reprogramming because the mechanism is more direct. The science is based on established biology (senescence has been studied for decades), not novel technology. This is reflected in smaller but more distributed funding across multiple companies. The advantage: potentially faster to clinic. The limitation: single-mechanism drugs may have more modest effects than platform approaches."
+            },
+            {
+                title: "5.2.3 State of the Pipeline and Regulatory Pathways",
+                body: `<p><strong>As of mid-2026, senolytic programs span preclinical through early Phase II:</strong></p>
+
+<ul>
+<li><strong>Early clinical trials</strong> evaluating senolytic efficacy and safety in age-related indications:
+  <ul>
+    <li>Idiopathic pulmonary fibrosis (IPF) — chronic fibrotic lung disease</li>
+    <li>Frailty and functional decline in older adults</li>
+    <li>Vascular aging and endothelial dysfunction</li>
+    <li>Osteoarthritis and joint aging</li>
+  </ul>
+</li>
+
+<li><strong>Key biomarkers under evaluation:</strong> Senescent-cell burden (p16, p21 expression), SASP markers (IL-6, TNF-α), tissue-specific function.</li>
+
+<li><strong>Regulatory pathways are clearer than for reprogramming:</strong> IPF is an established disease indication with FDA precedent, so senolytic programs targeting IPF have a more defined route to approval.</li>
+</ul>
+
+<p><strong>Timeline:</strong> First senolytic approvals for specific indications (e.g., IPF, frailty) could occur in the late 2020s if Phase II trials show clinical benefit and manageable safety profiles.</p>`,
+                notes: "IPF is a key indication because it's a clear, high-burden disease with strong senescence pathology. If a senolytic shows benefit in IPF, that's a regulatory win and a market opportunity. The senescence mechanism in frailty is less well-established in humans, so trials there are riskier. But several companies are betting on frailty because the unmet need is enormous."
+            },
+            {
+                title: "5.2.4 Economic Profile and Positioning",
+                body: `<p><strong>Senolytics present a different economic profile than cellular reprogramming:</strong></p>
+
+<ul>
+<li><strong>Lower development cost</strong> (relative to gene therapies or cell therapies): traditional small-molecule and biologics pathways.</li>
+
+<li><strong>Potential for broad-indication portfolio:</strong> A single senolytic could be developed for IPF, frailty, cardiovascular disease, and other senescence-driven conditions.</li>
+
+<li><strong>Pricing will be indicative of unmet need and mechanism:</strong>
+  <ul>
+    <li>For IPF, where current treatments are expensive ($50K–$100K+ annually), senolytics could command premium pricing.</li>
+    <li>For frailty or general healthy aging, pricing may be constrained by willingness-to-pay in non-life-threatening indications.</li>
+  </ul>
+</li>
+
+<li><strong>Competition:</strong> If multiple senolytics reach market, generic/biosimilar pressure and competition could lower prices faster than for proprietary gene therapies.</li>
+</ul>
+
+<p><strong>Market size:</strong> By 2030, senolytics could occupy a multi-billion-dollar space if approved for 2–3 common age-related indications. However, uptake will be tied to clinical efficacy evidence and insurance reimbursement.</p>`,
+                notes: "Senolytics have a clearer economics than reprogramming: they fit into existing pharmaceutical development and commercialization models. IPF is a ~$5B market globally; if senolytics capture even 20% of that, it's significant. Frailty is a much larger market (potentially trillions in cost if you count total health spending on older adults), but harder to define and reimbursement for 'frailty treatment' is uncertain."
+            },
+            {
+                title: "5.2.5 Integration with Primary Care and Mental Health",
+                body: `<p><strong>Senolytics have stronger potential for primary-care integration than cellular reprogramming:</strong></p>
+
+<ul>
+<li><strong>Clear therapeutic indications.</strong> If approved for IPF or other defined diseases, senolytics fit existing diagnostic and treatment pathways.</li>
+
+<li><strong>Operational simplicity.</strong> Oral or injectable senolytics are easier to administer than cell or gene therapies requiring specialist infrastructure.</li>
+
+<li><strong>Biomarker practicality.</strong> Senescent-cell burden and SASP markers are easier to measure than epigenetic age, enabling non-specialist monitoring.</li>
+
+<li><strong>Mental health and adherence.</strong> Patients with IPF or clear frailty diagnosis understand why they're receiving treatment. Messaging is clinical, not speculative ("treat your disease" vs. "reverse aging").</li>
+</ul>
+
+<p><strong>For primary care in underserved settings:</strong></p>
+<ul>
+<li>Once approved and generic competition exists, senolytics could be distributed through primary-care systems in lower-resource settings at lower cost.</li>
+<li>The barrier is not technology complexity but rather cost, reimbursement, and integration into local clinical protocols.</li>
+</ul>`,
+                notes: "This is one of the realistic pathways to underserved-population impact. If a senolytic is approved for IPF at $5K–$10K annually and then generics bring the cost down to $500–$1K, that's something public health systems in middle-income countries could consider incorporating into their NCD programs. The clinical clarity (you diagnose IPF, you treat with senolytic) is a major advantage over 'take this to reverse aging.'"
+            },
+            {
+                title: "5.2.6 Implications for Underserved Populations",
+                body: `<p><strong>Senolytics present the most realistic near-term pathway to meaningful underserved-population impact among therapeutics:</strong></p>
+
+<ul>
+<li><strong>Mechanistic clarity:</strong> Senescence is relevant to common age-related diseases (fibrosis, decline, inflammation) that are high-burden in underserved settings.</li>
+
+<li><strong>Regulatory precedent:</strong> Approval pathways are clearer because they align with established disease indications.</li>
+
+<li><strong>Economic plausibility:</strong> Once generics exist, cost could fall to ranges compatible with middle-income country health budgets.</li>
+
+<li><strong>Integration pathway:</strong> Primary-care clinicians in low-resource settings already treat IPF, frailty, and chronic inflammation. Adding a senolytic to existing protocols is simpler than standing up new specialist infrastructure.</li>
+</ul>
+
+<p><strong>Critical success factors for underserved-population adoption by 2030–2035:</strong></p>
+<ul>
+<li>Clear clinical evidence of benefit in high-burden indications (IPF, frailty, cardiovascular disease).</li>
+<li>Generic entry and price reduction as patents expire.</li>
+<li>WHO or regional health authority endorsement for use in NCD/healthy-aging strategies.</li>
+<li>Integration into community mental-health and NCD protocols that are already trusted locally.</li>
+</ul>`,
+                notes: "Senolytics are the 'realistic hope' category for underserved populations. Not transformational like reprogramming might be, but tractable: approvals likely in 2027–2029, generics 2030–2035, and actual adoption in low-resource settings starting in mid-2030s. This requires deliberate policy work, not just market forces."
+            },
+            {
+                title: "5.3 Plasma, Autophagy, & Gene/RNA Therapeutics",
+                body: "",
+                notes: ""
+            },
+            {
+                title: "5.3.1 Definition and Scientific Premise",
+                body: `<p>This category encompasses three mechanistically distinct approaches unified by their targeting of aging pathways through systemic or cellular interventions:</p>
+
+<p><strong>1. Plasma-based therapies</strong></p>
+<ul>
+<li>Young-plasma or plasma-derived factors, based on the premise that circulating factors in young blood promote rejuvenation and that aging plasma contains circulating toxins.</li>
+<li>Approaches include parabiosis (blood exchange), plasma transfusion, and synthetic mimetics of rejuvenation factors (e.g., GDF-11).</li>
+</ul>
+
+<p><strong>2. Autophagy-modulating therapeutics</strong></p>
+<ul>
+<li>Compounds targeting mTORC1, SIRT1, or other pathways that regulate cellular autophagy (the process by which cells degrade damaged components).</li>
+<li>Premise: enhanced autophagy clears senescent mitochondria, protein aggregates, and other damage, slowing aging.</li>
+</ul>
+
+<p><strong>3. Gene and RNA therapeutics for aging pathways</strong></p>
+<ul>
+<li>Gene therapies or oligonucleotide therapeutics modulating aging-related pathways (sirtuins, FOXO, telomerase, NAD+-related pathways).</li>
+<li>Goal: systemic or organ-specific modulation of aging hallmarks.</li>
+</ul>`,
+                notes: "This is a broad, diverse category. Plasma therapies have been hyped but have weaker evidence. Autophagy is well-established biology (mTOR inhibitors like rapamycin are known to extend lifespan in animals). Gene/RNA therapies are promising but capital-intensive. The category is united more by target (aging) than by mechanism."
+            },
+            {
+                title: "5.3.2 Market Position and Funding Snapshot",
+                body: `<p>This category attracted meaningful 2025–26 funding, though distributed across diverse companies:</p>
+
+<ul>
+<li>Plasma-based and plasma-derived companies have raised capital, though with more skepticism post-2023 (following concerns about methuselah ethics and efficacy claims).</li>
+
+<li>Autophagy-modulating therapeutics focused on longevity applications have received VC and strategic funding, especially those with clear mechanistic targets (e.g., mTOR).</li>
+
+<li>Gene and RNA therapeutics targeting aging pathways represent a growing pipeline, supported by advances in delivery (AAV, LNP, antisense technologies).</li>
+</ul>
+
+<p><strong>Capital allocation reflects investor skepticism of plasma,</strong> more confidence in autophagy, and strong conviction in gene/RNA technologies (which have broader biotech support beyond longevity).</p>`,
+                notes: "Plasma has lost some credibility post-2023 (the Parabiosis case study illustrates risks of overhyped mechanisms). Autophagy is more scientifically grounded. Gene/RNA is hot in biotech generally, so longevity-focused applications benefit from that capital flow even if aging is not the lead indication."
+            },
+            {
+                title: "5.3.3 State of Pipeline and Regulatory Considerations",
+                body: `<p><strong>As of mid-2026:</strong></p>
+
+<ul>
+<li><strong>Plasma therapies:</strong> Mostly preclinical or early clinical, with regulatory pathway unclear (is this drug, biologic, blood product?).</li>
+
+<li><strong>Autophagy modulators:</strong> Several programs in Phase I/II for age-related indications (e.g., metabolic disease, neurodegeneration). Rapamycin itself is FDA-approved for other indications, enabling faster repurposing studies.</li>
+
+<li><strong>Gene/RNA therapeutics:</strong> Programs advancing through standard gene-therapy development pathways (preclinical through Phase II), with timelines aligned to typical gene-therapy programs (5–8 years to approval).</li>
+</ul>
+
+<p><strong>Key regulatory considerations:</strong></p>
+<ul>
+<li>Plasma: FDA classification and manufacturing standards remain uncertain; plasma exchange for longevity is not standard care and faces reimbursement barriers.</li>
+<li>Autophagy modulators: Approval pathways clearer if indication is a specific disease (metabolic syndrome, neurodegeneration) rather than "aging."</li>
+<li>Gene/RNA: Regulatory precedent exists (approved gene therapies in spinal muscular atrophy, certain cancers), but cost, manufacturing, and delivery remain barriers.</li>
+</ul>`,
+                notes: "Plasma faces the most regulatory uncertainty because it's not a drug in the traditional sense and manufacturing/standardization are challenging. Autophagy modulators benefit from rapamycin's precedent. Gene/RNA benefits from established regulatory frameworks but faces the standard challenges of advanced therapeutics (cost, delivery, off-target effects)."
+            },
+            {
+                title: "5.3.4 Economic Profile and Business Models",
+                body: `<p><strong>Highly divergent economics across the three approaches:</strong></p>
+
+<ul>
+<li><strong>Plasma therapies:</strong> If based on autologous (own) blood, cost is primarily processing and delivery (~$5K–$20K per treatment). Allogeneic (donor) plasma is cheaper per unit but raises safety/matching questions.</li>
+
+<li><strong>Autophagy modulators:</strong> Small-molecule drugs (e.g., mTOR inhibitors) have low manufacturing cost (~$10–$100 per dose) and could be priced at $1K–$10K annually depending on indication and positioning.</li>
+
+<li><strong>Gene/RNA therapeutics:</strong> High development cost and manufacturing complexity; pricing in the $100K–$500K+ range for single-dose or annual therapies.</li>
+</ul>
+
+<p><strong>Market size by 2030:</strong> Autophagy modulators could reach $5–$15B annually if approved for common metabolic/aging indications. Gene/RNA therapeutics targeting aging pathways, if approved, would occupy a smaller but high-value market ($1–$5B). Plasma remains niche unless manufacturing and efficacy questions are resolved.</p>`,
+                notes: "Autophagy modulators have the best unit economics and simplest path to affordability. Gene/RNA is expensive and will remain so. Plasma is uncertain—high cost, unclear efficacy, regulatory barriers."
+            },
+            {
+                title: "5.3.5 Integration with Primary Care and Mental Health",
+                body: `<p><strong>Integration potential is highly dependent on mechanism and indication:</strong></p>
+
+<ul>
+<li><strong>Plasma-based therapies:</strong> Require specialized infrastructure (apheresis centers, processing labs), making primary-care integration difficult. Mental-health messaging is speculative ("restore youthful factors").</li>
+
+<li><strong>Autophagy modulators:</strong> If approved as tablets for metabolic disease or neurodegeneration, readily integrate into primary care. Clear clinical messaging reduces mental-health barriers.</li>
+
+<li><strong>Gene/RNA therapeutics:</strong> Initial applications likely in specialist centers (neurology, metabolism). Integration requires partnerships with primary care for monitoring.</li>
+</ul>
+
+<p><strong>For underserved populations,</strong> autophagy modulators have the highest integration potential (oral, lower cost, established disease indications). Plasma and gene/RNA therapeutics face infrastructure and cost barriers.</p>`,
+                notes: "Autophagy modulators are the most primary-care-friendly because they're oral drugs with clear disease indications. The others require specialist infrastructure or have unclear messaging."
+            },
+            {
+                title: "5.3.6 Implications for Underserved Populations",
+                body: `<p><strong>Realistic pathways to underserved-population impact differ sharply by approach:</strong></p>
+
+<p><strong>Plasma therapies:</strong> Limited near-term impact. High cost, specialized infrastructure, and unproven efficacy limit adoption. Possible future impact only if synthetic factors are developed and validated.</p>
+
+<p><strong>Autophagy modulators:</strong> Moderate potential. If efficacy is shown in metabolic disease or age-related neurodegeneration, and cost falls with generics, integration into public-health NCD programs is plausible by 2030–2035.</p>
+
+<p><strong>Gene/RNA therapeutics:</strong> Long-term (2035+) potential if costs fall and delivery improves. Public-health integration would require:
+<ul>
+<li>Clear evidence of benefit in high-burden indications (not speculative aging reversal)</li>
+<li>Technology transfer or generic licensing for manufacturing in middle-income countries</li>
+<li>Integration into regional treatment protocols for specific diseases (not general healthy-aging programs)</li>
+</ul>
+</p>
+
+<p><strong>Overall, this category has lower underserved-population impact potential than senolytics,</strong> due to mechanistic complexity, cost, and infrastructure requirements.</p>`,
+                notes: "Plasma is a dead-end for underserved populations. Autophagy modulators have plausibility if efficacy is proven. Gene/RNA is too expensive and complex for near-term underserved-population deployment, though long-term (2035+) technology transfer could change that."
+            },
+            {
+                title: "5.4 Early Screening, Imaging, and Multi-Cancer Early Detection (MCED)",
+                body: "",
+                notes: ""
+            },
+            {
+                title: "5.4.1 Definition and Role in the Longevity Stack",
+                body: `<p><strong>Definition:</strong> Platforms providing early detection of cancer and other age-related diseases through imaging, multi-cancer early detection (MCED), or comprehensive screening that goes beyond standard of care, with explicit longevity or healthspan positioning.</p>
+
+<p><strong>Key modalities:</strong></p>
+
+<ul>
+<li><strong>Full-body advanced imaging:</strong> Whole-body MRI, CT, and hybrid imaging systems that detect structural abnormalities (tumors, atherosclerotic plaques, organ degeneration) before symptoms.</li>
+
+<li><strong>Multi-cancer early detection (MCED) blood tests:</strong> Liquid biopsies that detect circulating tumor DNA, proteins, or other biomarkers from cancers at early stages.</li>
+
+<li><strong>Comprehensive screening packages:</strong> Integrated imaging, biomarker panels, and AI-enabled risk stratification to identify multiple diseases simultaneously.</li>
+</ul>
+
+<p><strong>Role in the longevity stack:</strong> Screening/MCED sits at the interface between diagnostics (measurement) and therapeutics (intervention). Early detection enables earlier intervention, creating a pathway for preventive therapeutics to reach patients before symptomatic disease.</p>`,
+                notes: "This category is critical infrastructure. If you develop a senolytic or other age-related therapeutic, you need biomarkers/screening to identify who to treat. Companies like Prenuvo (full-body MRI), Q Bio (whole-body imaging), and Neko Health (preventive scanning) are building this layer. MCED companies (Grail, Guardant, Thrive) are attacking early cancer detection specifically."
+            },
+            {
+                title: "5.4.2 Market Position and Growth Signals",
+                body: `<p><strong>Within the July 2025–June 2026 dataset:</strong></p>
+
+<ul>
+<li>Early screening and MCED attracted funding as part of broader preventive health platforms (~$307.3M across 2 deals for platforms, which includes screening/imaging companies).</li>
+
+<li>Standalone MCED companies like Grail (owned by Illumina) and Guardant Health have raised billions globally and are pursuing insurance reimbursement.</li>
+
+<li>Full-body imaging platforms (Prenuvo, Q Bio) have raised tens of millions from VC and corporate partners.</li>
+</ul>
+
+<p><strong>Growth signals:</strong></p>
+
+<ul>
+<li>Insurance companies and health systems are beginning to reimburse advanced screening in specific populations (high-risk, over 50).</li>
+
+<li>MCED blood tests are moving toward clinical adoption, with FDA discussions and reimbursement pathways emerging in 2026.</li>
+
+<li>Consumer demand for preventive screening is strong among high-income segments, creating a willingness-to-pay market even without insurance coverage.</li>
+</ul>`,
+                notes: "This is one of the faster-moving longevity segments from a commercialization perspective. Unlike therapeutics (which take 5–10 years to approve), screening platforms can offer services immediately if they're positioned as health-optimization tools rather than medical diagnostics. This has advantages (fast market entry) and risks (less clinical evidence of outcomes)."
+            },
+            {
+                title: "5.4.3 Economic and Operational Profile",
+                body: `<p><strong>Economics differ from therapeutics:</strong></p>
+
+<ul>
+<li><strong>Lower regulatory barriers.</strong> Screening and imaging operate in less-regulated space than drugs. Full-body MRI can be offered as health service without FDA approval.</li>
+
+<li><strong>B2B and B2C revenue streams.</strong>
+  <ul>
+    <li>B2B: Health systems, employers, insurers paying for platform access or per-test fees.</li>
+    <li>B2C: Direct-to-consumer screening packages, $1K–$5K per person for comprehensive imaging or MCED blood panels.</li>
+  </ul>
+</li>
+
+<li><strong>Scalability challenges.</strong> Full-body MRI requires capital investment in imaging centers. MCED blood tests have better scalability (draw blood, ship to lab, process).</li>
+
+<li><strong>Reimbursement is the key constraint.</strong> Without insurance coverage, screening remains niche (wealthy, worried-well). With coverage, market size expands dramatically.</li>
+</ul>
+
+<p><strong>Market size by 2030:</strong> High single-digit to low double-digit billions, depending on reimbursement adoption. MCED could be $5–$10B if widely adopted for cancer screening. Full-body imaging remains smaller (~$1–$3B) unless employer/health-system adoption accelerates.</p>`,
+                notes: "The reimbursement question is the entire market. If insurance covers MCED for high-risk individuals, it's a large market. If it doesn't, it stays niche. Same for full-body imaging. Companies are pushing for coverage by showing health outcomes (cancer caught earlier = better prognosis), but payer uptake is still uncertain."
+            },
+            {
+                title: "5.4.4 Clinical Value and Evidence Landscape",
+                body: `<p><strong>Clinical evidence is mixed and evolving:</strong></p>
+
+<ul>
+<li><strong>Full-body MRI:</strong> Can detect early-stage cancers and other pathology, but incidence of incidental findings (things that look abnormal but are benign) is high. Clinical outcomes (does earlier detection improve survival?) are less clear.</li>
+
+<li><strong>MCED blood tests:</strong> Show promise in detecting early-stage cancers in clinical trials, but real-world performance and clinical outcomes are still being defined. FDA discussions ongoing as of mid-2026.</li>
+
+<li><strong>Challenge:</strong> Screening typically aims to detect symptomatic diseases early. For healthy aging optimization, the endpoint (living longer, staying functional) is much harder to measure.</li>
+</ul>
+
+<p><strong>Key questions for underserved-population deployment:</strong></p>
+
+<ul>
+<li>Does early detection actually lead to better outcomes, or does it just identify things that wouldn't have become symptomatic?</li>
+<li>What is the false-positive rate, and how do patients in lower-resource settings manage unexpected findings?</li>
+<li>Is the cost of widespread screening justified by health gains, or would that same budget be better spent on treatment?</li>
+</ul>`,
+                notes: "The evidence gap is real. We don't yet have solid data showing that widespread screening of asymptomatic people extends healthspan or lifespan. Full-body MRI has high false-positive rates. MCED is still being validated. This is a cautionary tale: screening sounds good but outcomes data matters."
+            },
+            {
+                title: "5.4.5 Integration with Primary Care and Mental Health",
+                body: `<p><strong>Integration is complex because screening data must feed into clinical decision-making:</strong></p>
+
+<ul>
+<li><strong>Workflow fit.</strong> Primary-care clinicians are already overwhelmed. Adding another screening tool (MCED, full-body MRI) requires clear protocols for what to do with positive findings. Without integration, screening creates work (unexpected findings that need follow-up) without clear benefit.</li>
+
+<li><strong>Communication and anxiety management.</strong> Telling a patient "we found something, we're not sure if it matters, please follow up with a specialist" creates anxiety. Mental-health support for patients with incidental findings is often lacking.</li>
+
+<li><strong>Equity and trust.</strong> In underserved communities, external screening programs (sent in to do full-body imaging) can feel extractive rather than integrated into trusted local care. Trust goes to local providers, not outside scanners.</li>
+
+<li><strong>Data integration.</strong> For screening to inform clinical decisions in primary care, data must flow to primary clinicians in a format they can understand and act on. Most screening companies don't have this infrastructure.</li>
+</ul>`,
+                notes: "Screening integration is often overlooked. You can build a beautiful MCED platform, but if primary-care clinicians don't know what to do with the results, or if mental health support for incidental findings isn't available, you've created more problems than you solved. This is why integration requires systems thinking, not just technology."
+            },
+            {
+                title: "5.4.6 Implications for Underserved Populations",
+                body: `<p><strong>For underserved populations, screening has both promise and significant caveats:</strong></p>
+
+<p><strong>Promise:</strong></p>
+<ul>
+<li>Early detection of cancer or other high-burden diseases before symptoms could improve outcomes if follow-up treatment is available.</li>
+<li>MCED blood tests (if validated and cost-reduced) are more scalable than imaging—a blood draw and lab test don't require capital-intensive imaging centers.</li>
+</ul>
+
+<p><strong>Caveats:</strong></p>
+<ul>
+<li>Without treatment capacity, early detection is harmful (causes anxiety, consumes clinical resources, delays care for symptomatic patients).</li>
+<li>Full-body imaging requires expensive infrastructure and specialist interpretation—unlikely to be deployed at scale in low-resource settings by 2030.</li>
+<li>High false-positive rates and incidental findings create mental-health and follow-up burdens that low-resource health systems can't manage.</li>
+<li>For longevity purposes, screening asymptomatic healthy people for aging-related diseases is different from screening for cancer in high-risk groups—the clinical justification is weaker.</li>
+</ul>
+
+<p><strong>Realistic path forward:</strong> By 2030–2035, MCED blood tests validated for cancer detection could be integrated into some primary-care screening programs in middle-income countries, especially if WHO or regional health authorities endorse them. Full-body imaging remains niche until costs fall dramatically and/or strong outcomes data emerges.</p>`,
+                notes: "Screening is seductive because it feels like prevention. But screening without follow-up capacity is harmful. For underserved populations, the careful focus should be: (1) does early detection actually improve outcomes in this population, and (2) do we have the treatment capacity to act on findings? If the answer to both is yes, proceed. If not, the resources are better spent on treatment of symptomatic disease."
+            },
+            {
+                title: "End of Deck 3A",
+                body: "<p style='font-size: 20px; color: #999; margin-top: 80px;'>Sections 5.1–5.4 complete. Key takeaways: (1) Cellular reprogramming is highest-funded but earliest-stage and most speculative. (2) Senolytics have clearest path to approval and most realistic underserved-population impact by 2030–2035. (3) Plasma/autophagy/gene-RNA is diverse category; autophagy has potential, plasma is speculative. (4) Screening/MCED is growing market but with significant evidence gaps and integration challenges for underserved settings. Throughout all four categories: integration with primary care and mental health is the critical constraint for reaching underserved populations.</p><p style='font-size: 16px; color: #ccc; margin-top: 40px;'>Ready for Deck 3B: Category Deep Dives (Biomarkers, Clinics, Services) →</p>",
+                notes: "Deck 3A establishes the therapeutic and diagnostic landscape. The key insight: capital is flowing to the most speculative mechanisms (reprogramming) while more tractable mechanisms (senolytics) get less attention. For systems leaders, the takeaway is that the market won't self-correct toward underserved-population benefit—that requires deliberate policy and design. Deck 3B will cover the platforms and services that are even more undercapitalized than therapeutics, but are often the most relevant to actual patient engagement and outcomes."
+            }
+        ];
+
+        let currentSlide = 0;
+        let showNotes = true;
+
+        function renderSlide(index) {
+            const container = document.getElementById('slidesContainer');
+            const slide = slides[index];
+
+            let html = `
+                <div class="slide-container">
+                    <h2 class="slide-title">${slide.title}</h2>
+                    <div class="slide-body">${slide.body}</div>
+                    ${slide.notes ? `<div class="speaker-notes ${showNotes ? 'visible' : ''}">
+                        <h4>Speaker Notes</h4>
+                        <p>${slide.notes}</p>
+                    </div>` : ''}
+                </div>
+            `;
+
+            container.innerHTML = html;
+            updateNavigation();
+            updateProgress();
+        }
+
+        function updateNavigation() {
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === slides.length - 1;
+            document.getElementById('slideNumber').textContent = currentSlide + 1;
+            document.getElementById('totalSlides').textContent = slides.length;
+            document.getElementById('progressText').textContent = `Slide ${currentSlide + 1} of ${slides.length}`;
+        }
+
+        function updateProgress() {
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                renderSlide(currentSlide);
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                renderSlide(currentSlide);
+                window.scrollTo(0, 0);
+            }
+        }
+
+        document.getElementById('toggleNotes').addEventListener('click', function() {
+            showNotes = !showNotes;
+            const notes = document.querySelectorAll('.speaker-notes');
+            notes.forEach(note => {
+                if (showNotes) {
+                    note.classList.add('visible');
+                } else {
+                    note.classList.remove('visible');
+                }
+            });
+            this.classList.toggle('active');
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+        });
+
+        renderSlide(0);
+    </script>
+</body>
+</html>

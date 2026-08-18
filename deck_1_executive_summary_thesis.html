@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deck 1: Executive Summary & Thesis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .slide-counter {
+            color: #ccc;
+            font-size: 14px;
+            min-width: 60px;
+            text-align: right;
+        }
+        button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        button:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.6);
+        }
+        button.active {
+            background: rgba(255,255,255,0.4);
+            border-color: white;
+        }
+        .slide-container {
+            padding: 60px;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 30px;
+            line-height: 1.3;
+        }
+        .slide-body {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #333;
+            margin-bottom: 40px;
+            flex-grow: 1;
+        }
+        .slide-body p {
+            margin-bottom: 16px;
+        }
+        .slide-body ul {
+            margin-left: 20px;
+            margin-bottom: 16px;
+        }
+        .slide-body li {
+            margin-bottom: 10px;
+        }
+        .slide-body strong {
+            font-weight: 600;
+            color: #1e3c72;
+        }
+        .slide-body em {
+            font-style: italic;
+            color: #555;
+        }
+        .speaker-notes {
+            display: none;
+            background: #f9f9f9;
+            border-top: 1px solid #e0e0e0;
+            padding: 20px;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .speaker-notes.visible {
+            display: block;
+        }
+        .speaker-notes h4 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .speaker-notes p {
+            margin-bottom: 12px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: #fafafa;
+            border-top: 1px solid #e0e0e0;
+        }
+        .nav-button {
+            background: #1e3c72;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .nav-button:hover:not(:disabled) {
+            background: #2a5298;
+        }
+        .nav-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .slide-progress {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+        .progress-bar {
+            width: 200px;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin: 10px auto;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #2a5298;
+            transition: width 0.3s;
+        }
+        .section-break {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 600px;
+        }
+        .section-break h2 {
+            font-size: 48px;
+            font-weight: 700;
+        }
+        .callout {
+            background: #e8f4f8;
+            border-left: 4px solid #2a5298;
+            padding: 16px;
+            margin: 20px 0;
+        }
+        .callout p {
+            margin: 0;
+            font-weight: 500;
+            color: #1e3c72;
+        }
+        @media (max-width: 768px) {
+            .slide-container {
+                padding: 40px;
+            }
+            .slide-title {
+                font-size: 28px;
+            }
+            .slide-body {
+                font-size: 14px;
+            }
+            .navigation {
+                padding: 20px 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Deck 1: Executive Summary & Thesis</h1>
+            <div class="header-controls">
+                <button id="toggleNotes" class="active">👁 Notes</button>
+                <div class="slide-counter">
+                    <span id="slideNumber">1</span> / <span id="totalSlides">25</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="slidesContainer"></div>
+
+        <div class="navigation">
+            <button class="nav-button" id="prevBtn" onclick="previousSlide()">← Previous</button>
+            <div class="slide-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 4%"></div>
+                </div>
+                <div id="progressText">Slide 1 of 25</div>
+            </div>
+            <button class="nav-button" id="nextBtn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        const slides = [
+            {
+                title: "Deck 1: Executive Summary & Thesis",
+                subtitle: "The Longevity Market in 2026",
+                body: "<p style='font-size: 20px; color: #666; margin-top: 60px;'>Sections 1–2: Where the market stands, what drives it, and why primary care integration matters.</p>",
+                notes: "This deck establishes the thesis for the entire 6-deck suite. By the end, the audience should understand: (1) the longevity market is real, growing, and capital-visible but narrow by company count; (2) therapeutics and platforms dominate capital allocation; (3) the core risk is that longevity remains decoupled from primary care and community mental health; (4) the nine-category taxonomy used throughout the report. This deck is the foundation for all subsequent decks."
+            },
+            {
+                title: "1.1 Where the Market Stands in Mid-2026",
+                body: `<p>By mid-2026, "longevity" has moved well beyond niche biohacking. It now sits at the intersection of a rapidly expanding global wellness economy, a maturing geroscience and therapeutics pipeline, and increasingly sophisticated preventive platforms.</p>
+
+<p><strong>Demand side:</strong> The global wellness economy reached approximately <strong>$6.8 trillion in 2024</strong> and is forecast to approach <strong>$9.8 trillion by 2029</strong>, growing around 7.6% annually and outpacing global GDP. Within this, prevention, personalized medicine, mental wellness, and healthy eating/nutrition collectively represent well over <strong>$2 trillion</strong> of spend.</p>
+
+<p><strong>Supply and capital side:</strong> A focused view of pure-play longevity reveals a market that is visible by dollars but still narrow by company count. Between July 2025 and June 2026, <strong>19 disclosed equity rounds</strong> met a strict pure-play definition, raising about <strong>$1.2 billion across 18 companies</strong>. Six of those 19 deals were larger than $50 million, and two larger than $100 million, with a single Series C in epigenetic reprogramming accounting for more than one-third of all disclosed capital.</p>
+
+<p>This structure matters: the headline dollar total can be misleadingly large relative to the true depth of the market. Much of the capital is being allocated to a narrow set of therapeutics platforms and scaled preventive infrastructure rather than a broad base of clinics or consumer offerings.</p>`,
+                notes: "Key message: The longevity market is real and growing, but capital is concentrated in therapeutics and platforms, not distributed across clinics or consumer offerings. The $1.2B figure is significant (it's a real market), but it's important to note that 19 deals across ~18 companies is very narrow—this is not a broad market with hundreds of entrants. The single Series C in epigenetic reprogramming accounting for >1/3 of capital shows how concentrated the money is. This is important for understanding why many downstream services (clinics, consumer offerings) are undercapitalized."
+            },
+            {
+                title: "1.2 Category Balance: Therapeutics Lead by Capital, Platforms Punch Above Their Weight (Part 1)",
+                body: `<p>The 2025–26 funding snapshot shows a clear skew toward therapeutics and data-heavy preventive platforms:</p>
+
+<ul>
+<li><strong>Longevity therapeutics developers</strong> (cellular rejuvenation and epigenetic reprogramming companies) raised about <strong>$710.4 million across 6 deals</strong>, capturing <strong>59.3% of disclosed capital</strong>.</li>
+
+<li><strong>Preventive health platforms</strong> (data and infrastructure layers aggregating labs, scans, medical records, wearables, and AI) captured about <strong>$307.3 million across only 2 deals</strong>, or roughly <strong>25.7% of capital</strong>.</li>
+
+<li><strong>Healthy-aging clinics</strong> saw the most visible company-formation activity outside therapeutics and consumer brands, with 5 deals but only about <strong>$42 million total, just 3.5% of capital</strong>.</li>
+</ul>`,
+                notes: "Note the asymmetry: therapeutics (59.3%) dominate by orders of magnitude. Platforms punch above their weight because there are only 2 deals capturing 25.7% of capital—this means the average platform deal is much larger than the average therapeutic deal. Clinics are heavily undercapitalized (3.5%) despite visible company formation, suggesting a wedge between founder interest and institutional capital appetite."
+            },
+            {
+                title: "1.2 Category Balance: Therapeutics Lead by Capital, Platforms Punch Above Their Weight (Part 2)",
+                body: `<ul>
+<li><strong>Consumer longevity brands</strong> attracted about <strong>$118.2 million across 4 deals</strong>, with stronger examples anchored in science, biomarkers, and clinical nutrition rather than generic wellness messaging.</li>
+
+<li><strong>Diagnostics and biomarker companies</strong>, including biological age testing platforms, secured only <strong>1.6% of capital across 2 deals</strong>, despite their strategic role as "rails" for many other categories.</li>
+</ul>
+
+<p>Parallel market-research forecasts suggest that the underlying longevity biotech drug market (senolytics, NAD+ modulators, mTOR inhibitors, telomere and mitochondrial therapies, etc.) could grow from approximately <strong>$28.4 billion in 2025 to about $101.6 billion by 2034</strong> (15.2% CAGR). Longevity drug-discovery platforms (AI-accelerated discovery, multi-omics, biomarker identification) are projected to grow from around <strong>$2.4 billion in 2025 to $13.1 billion by 2034</strong> (19.8% CAGR), underscoring investor conviction that platform-level capabilities will drive an outsized share of long-term value.</p>`,
+                notes: "Key insight: Biomarkers and diagnostics are undercapitalized relative to their strategic importance. This will matter when we get to Deck 3B (Section 5.5), where we discuss biomarker platforms. Consumer brands need to be anchored in science to get capital—generic wellness messaging doesn't move the needle. The market-research forecasts (28.4B → 101.6B for drugs; 2.4B → 13.1B for platforms) show strong confidence in the underlying opportunity. The 19.8% CAGR for discovery platforms vs 15.2% for drugs suggests investors believe platforms will capture proportionally more value."
+            },
+            {
+                title: "1.3 Geography and Concentration: One Dominant Hub",
+                body: `<p><strong>Key finding:</strong> Geographically, the current longevity market is highly concentrated in North America.</p>
+
+<ul>
+<li>North America accounts for roughly <strong>91% of disclosed capital</strong> in the July 2025–June 2026 pure-play sample (about $1.09 billion across 13 deals). Median round sizes are significantly larger than in other regions.</li>
+
+<li>Europe and Asia-Pacific each produced three qualifying deals in that period; together, they represent less than 9% of disclosed capital.</li>
+
+<li>Latin America, the Middle East, and Africa registered no qualifying equity rounds in the strict dataset over the same window.</li>
+</ul>
+
+<p>This pattern aligns with broader projections in longevity-related biotech and discovery platforms, where North America represents around 40–45% of revenues, Europe around 27–28%, and Asia-Pacific roughly 19–22%, with APAC growing fastest from a smaller base.</p>`,
+                notes: "For underserved populations—rural communities, lower-income segments, and fragile or lower-resource health systems—the implication is clear: most capital and infrastructure for cutting-edge longevity therapies are being built far from where health systems are already strained, and rarely with those settings as the primary design constraint. This geographic concentration will be a recurring theme throughout the report (Sections 3.5, all of Section 10)."
+            },
+            {
+                title: "1.4 Integration Question: Can Longevity Stay Separate from Primary Care and Mental Health? (Part 1)",
+                body: `<p><strong>Core thesis of this report:</strong> Longevity, as currently financed and built, risks failing if it remains decoupled from primary care and community-based mental health.</p>
+
+<p>Several structural reasons sit behind this:</p>
+
+<ul>
+<li><strong>Burden of disease and spending patterns.</strong> The aging-related disease burden—cardiovascular disease, metabolic dysfunction, neurodegeneration, immune decline—is managed today largely through primary care, community health programs, and hospital systems, not through specialized longevity clinics. The global aging population (65+ rising toward 1.6 billion by 2050) will interact first and most frequently with those baseline systems.</li>
+
+<li><strong>Mental health and adherence.</strong> Long-term adherence to preventive regimens, therapeutics, and behavioral programs is strongly influenced by mental health, social support, and local context. Yet many longevity products and services are built as stand-alone cash-pay experiences, relatively detached from community mental-health infrastructures and from the social determinants that shape behavior.</li>
+</ul>`,
+                notes: "This is the through-line of the entire report. The burden of disease is in primary care, not in specialized longevity clinics. Adherence is the Achilles' heel of most preventive and longevity offerings—it requires mental health and social support, which longevity companies often ignore. These are not abstract points; they directly affect whether a longevity offering will work in practice."
+            },
+            {
+                title: "1.4 Integration Question: Can Longevity Stay Separate from Primary Care and Mental Health? (Part 2)",
+                body: `<ul>
+<li><strong>Trust and continuity.</strong> For underserved populations in particular, trust is often vested in local primary-care providers, community health workers, faith-based structures, and family networks. Services that appear as external, high-tech, or elite can struggle to gain traction, even if their biological rationale is strong.</li>
+
+<li><strong>Payment and policy.</strong> Public-sector and insurance payors, especially in middle- and low-income settings, are under pressure to prioritize high-burden, high-volume conditions and basic access. Longevity offerings that cannot be translated into clear primary-care pathways or that bypass community mental-health systems will struggle to find sustainable reimbursement outside affluent niches.</li>
+</ul>
+
+<p><strong>From an underserved-population perspective:</strong> The risk is a dual-track longevity landscape: one track where advanced therapeutics, early screening, and optimization services are available to a narrow, well-resourced segment; and another where aging-related disease is managed reactively, in overburdened primary-care and community settings with limited access to emerging tools.</p>`,
+                notes: "Trust and continuity are critical for engagement, especially in vulnerable populations. Payment/policy barriers mean that without reimbursement pathways or integration into primary care, longevity offerings become niche cash-pay services. The dual-track risk (advanced for the rich, reactive management for the poor) is the central equity concern of this report and will appear throughout."
+            },
+            {
+                title: "1.5 A Structured View of the Opportunity Set",
+                body: `<p>Within this context, the report frames the longevity market along three interlocking layers:</p>
+
+<p><strong>1. Biological and therapeutic layer</strong></p>
+<ul>
+<li>Cellular and epigenetic reprogramming / rejuvenation therapeutics</li>
+<li>Senolytics and related therapeutics targeting aging pathways</li>
+<li>Plasma-based, autophagy-modulating, gene and RNA therapeutics</li>
+<li>Longevity-focused biotech drug platforms and discovery engines</li>
+</ul>
+
+<p><strong>2. Measurement and infrastructure layer</strong></p>
+<ul>
+<li>Early screening, imaging, and multi-cancer early detection (MCED) platforms</li>
+<li>Biological age testing and biomarker platforms (epigenetic clocks, glycan markers, multi-omics)</li>
+<li>AI-accelerated drug-discovery and data platforms that underpin therapeutics and risk stratification</li>
+</ul>
+
+<p><strong>3. Service and consumer layer</strong></p>
+<ul>
+<li>Metabolic and hormone optimization clinics and virtual platforms (including menopause and male hormone care)</li>
+<li>Membership-based longevity clinics and advanced preventive centers</li>
+<li>Biological cryopreservation services and HBOT offerings</li>
+<li>Consumer-facing longevity brands where products are meaningfully anchored in measurable biology</li>
+</ul>`,
+                notes: "These three layers are not sequential; they are interlocking and must work together. For underserved populations, the structurally most important interactions are likely to occur at the interfaces between: (1) measurement and primary care (how biological age or imaging outputs feed into everyday clinical decisions); and (2) therapeutics and community-based mental health (how adherence, expectations, and psychosocial realities are handled when introducing geroscience-based therapies). This three-layer framework is the organizing principle for Sections 3–5 and will be referenced in the playbooks (Sections 11–12)."
+            },
+            {
+                title: "1.6 Key Findings for Underserved Populations",
+                body: `<p><strong>Several cross-cutting findings emerge from current data when viewed through an underserved-population lens:</strong></p>
+
+<ul>
+<li><strong>Funding momentum is real but narrow.</strong> Capital is flowing into a small set of therapeutics and platform companies, not into distributed primary-care or community-health models that could bring longevity concepts closer to vulnerable populations.</li>
+
+<li><strong>Clinics and consumer offerings are demand-validated but under-capitalized.</strong> Healthy-aging clinics and consumer brands show clear willingness to pay among early adopters, but relatively little institutional capital, especially when compared to therapeutics and platforms. This limits experimentation with models that could work outside affluent urban centers.</li>
+
+<li><strong>Platforms and biomarkers risk becoming upstream, high-income tools.</strong> Biological age testing and MCED are structurally positioned as upstream risk-stratification tools. Without intentional integration into primary-care workflows and public-health strategies, they are likely to remain niche services for people with the ability to self-fund.</li>
+</ul>`,
+                notes: "These findings directly shape the design principles and playbooks in Sections 9–12. The core issue is that capital is following therapeutics and platforms, not distributed primary-care models. This creates a structural gap: we can develop amazing tools, but if they don't integrate into the systems where most aging-related disease is actually managed, they will only serve the wealthy."
+            },
+            {
+                title: "1.6 Key Findings (Continued)",
+                body: `<ul>
+<li><strong>The wellness economy is much larger than the current longevity segment.</strong> With wellness spend at roughly 60% of all global health expenditures and growing, longevity solutions that can reframe themselves as credible, evidence-based ways to re-allocate existing wellness and prevention spend—rather than as entirely new demand—may find more traction in constrained settings.</li>
+
+<li><strong>Policy and demographic tailwinds favor healthy-ageing integration, not silos.</strong> As healthy ageing becomes a core development and policy concern—particularly in countries facing rapid demographic shifts—opportunities will likely favor solutions that align with healthy-ageing strategies, social protection, and "silver dividend" thinking rather than narrow, high-end optimization.</li>
+</ul>`,
+                notes: "The wellness insight is important: there is $2+ trillion of spend in prevention and wellness. Longevity doesn't need to create entirely new demand; it needs to reframe itself as a smarter use of existing wellness spend. Policy tailwinds exist, especially in emerging markets facing aging populations. This creates opportunities for founders and investors who think about healthy ageing as a systems problem, not just a high-tech niche."
+            },
+            {
+                title: "1.7 Implications and Structure of the Report",
+                body: `<p><strong>For investors, operators, and policymakers, the implications are twofold:</strong></p>
+
+<ol style='margin-left: 20px;'>
+<li><strong>The core longevity market is likely to grow rapidly in absolute terms,</strong> especially in geroscience therapeutics and AI-accelerated discovery platforms, supported by strong demographic and scientific tailwinds.</li>
+
+<li><strong>The translation of this growth into broad-based health gains</strong> will depend on integration with primary care and community mental health, and on deliberate design for underserved settings.</li>
+</ol>
+
+<p><strong>The remainder of this report follows a simple logic:</strong></p>
+<ul>
+<li>First, define and size the market, clarifying what counts as "longevity" and why.</li>
+<li>Second, map capital flows and category dynamics across therapeutics, platforms, and services.</li>
+<li>Third, analyze failure patterns and structural risks, including the dangers of remaining decoupled from primary-care and mental-health systems.</li>
+<li>Fourth, examine explicit implications and opportunity spaces for underserved populations.</li>
+<li>Finally, propose playbooks for founders and investors seeking to build or back longevity offerings that are biologically credible, economically sustainable, and capable of being integrated into real-world health systems over time.</li>
+</ul>`,
+                notes: "This slide sets up the structure of the remaining 5 decks. Deck 2 will cover market sizing (step 1). Decks 3A/3B will dive into categories (step 2). Deck 4 will address failure patterns (step 3). Section 10 and Deck 5 will cover implications for underserved populations and playbooks (steps 4–5). This is the roadmap."
+            },
+            {
+                title: "Section 2: Definitions, Taxonomy, and Scope",
+                body: "<p style='font-size: 20px; color: #aaa; margin-top: 60px;'>Establishing a disciplined, functional definition of the longevity market and the nine categories that organize the rest of the report.</p>",
+                notes: ""
+            },
+            {
+                title: "2.1 Why Definitions Matter in Longevity",
+                body: `<p>"Longevity" is used inconsistently across science, clinical practice, wellness, and capital markets. It can describe everything from senolytic drugs in Phase II trials to luxury wellness retreats. Without disciplined definitions, it is difficult to:</p>
+
+<ul>
+<li>Compare categories on risk, capital intensity, and time to impact.</li>
+<li>Assess what is truly additive to healthspan vs. a rebranding of existing services.</li>
+<li>Understand which models have any realistic path into primary care and community mental health, particularly for underserved populations.</li>
+</ul>
+
+<p><strong>This report therefore uses a narrow, functional definition of the longevity market:</strong></p>
+
+<div class='callout'>
+<p>Technologies, products, and services whose primary purpose is to extend healthy human lifespan (healthspan) by targeting aging biology, early detection of aging-related risk, or long-term optimization of metabolic, hormonal, and functional status.</p>
+</div>`,
+                notes: "This definition is intentionally narrow. It excludes generic wellness, conventional eldercare, and services where aging is incidental. The definition is functional, not philosophical—it focuses on what the product is designed to do, not what it might incidentally do. This matters because it allows us to be consistent about what counts as 'longevity' across all nine categories and all subsequent decks."
+            },
+            {
+                title: "2.1 Definition in Scope vs. Out of Scope",
+                body: `<p><strong>Under this definition, we explicitly exclude:</strong></p>
+
+<ul>
+<li>Generic wellness offerings (gyms, spas, cosmetic medspas, basic supplements) that do not explicitly target aging biology or long-term healthspan.</li>
+<li>Conventional eldercare, nursing homes, and services that primarily manage late-stage functional decline without addressing the biology or early determinants of aging.</li>
+<li>Products where older adults are a target customer segment, but aging is not a core design axis (e.g., general financial services for retirees).</li>
+</ul>
+
+<p><strong>We include the following focus areas as distinct but interlocking parts of the longevity market:</strong></p>
+
+<ol style='margin-left: 20px;'>
+<li>Cellular & epigenetic reprogramming / rejuvenation therapeutics</li>
+<li>Senolytics and related therapeutics</li>
+<li>Plasma, autophagy, and gene/RNA therapeutics</li>
+<li>Early screening, imaging, and multi-cancer early detection (MCED)</li>
+<li>Biological age testing and biomarker platforms</li>
+<li>Metabolic and hormone optimization platforms and clinics</li>
+<li>Biological cryopreservation</li>
+<li>Hyperbaric oxygen therapy (HBOT) as a longevity-positioned modality</li>
+<li>Virtual male hormone care</li>
+</ol>
+
+<p>The rest of this section and subsequent decks define each category and clarify scope boundaries.</p>`,
+                notes: "These nine categories are the taxonomic framework for the entire 6-deck suite. Decks 3A and 3B will do deep dives on each. The exclusions are important because they keep the definition disciplined—we're not conflating wellness with longevity, and we're not including services that happen to serve older people but aren't designed around aging biology."
+            },
+            {
+                title: "2.2 Therapeutics Layer: Cellular & Epigenetic Reprogramming",
+                body: `<p><strong>Definition:</strong> Biotech platforms and drug programs that aim to partially reset or modulate the epigenetic and transcriptional state of cells to a more youthful profile without erasing cell identity. Typical mechanisms include Yamanaka-factor-derived approaches, targeted transcription factor cocktails, or small-molecule and gene therapies that influence epigenetic marks and chromatin state.</p>
+
+<p><strong>In scope:</strong></p>
+<ul>
+<li>Companies explicitly describing themselves as working on cellular or epigenetic reprogramming for aging-related indications.</li>
+<li>Programs where aging biology (hallmarks such as epigenetic alterations, mitochondrial dysfunction) is a core rationale, even if the lead indication is an age-related disease.</li>
+</ul>
+
+<p><strong>Out of scope:</strong> General cell-therapy or regenerative-medicine plays without explicit aging or healthspan focus.</p>`,
+                notes: "Cellular reprogramming is the most technically ambitious category and the one attracting the most capital (the single Series C here captured >1/3 of all disclosed capital in 2025–26). This will be covered in depth in Deck 3A, Section 5.1. The definition focuses on mechanism and intent, not just on whether old cells are involved."
+            },
+            {
+                title: "2.2 Therapeutics Layer: Senolytics & Related Therapeutics",
+                body: `<p><strong>Definition:</strong> Drugs designed to selectively clear or modulate senescent cells (senolytics and senomorphics) or to intervene in closely related aging pathways (e.g., SASP modulation, telomere maintenance, mitochondrial rejuvenation), with the goal of delaying or reversing multi-system age-related decline.</p>
+
+<p><strong>In scope:</strong></p>
+<ul>
+<li>Dedicated senolytic pipelines, whether small-molecule, antibody-drug conjugate, or gene-based.</li>
+<li>Senomorphic compounds that suppress deleterious senescence-associated secretory phenotypes.</li>
+<li>Adjacent programs where senescence clearance or hallmarks of aging are a core mechanistic rationale.</li>
+</ul>
+
+<p><strong>Out of scope:</strong> Conventional oncology or fibrosis drugs that mention senescence tangentially without a healthspan framing.</p>`,
+                notes: "Senolytics are a more defined category than cellular reprogramming—there's strong preclinical and some clinical evidence. This will be covered in Deck 3A, Section 5.2. Senomorphics (compounds that suppress senescence secretion) are included because they target the same biology."
+            },
+            {
+                title: "2.2 Therapeutics Layer: Plasma, Autophagy, & Gene/RNA Therapeutics",
+                body: `<p><strong>Definition:</strong> Therapeutic approaches that leverage young-plasma or plasma-derived factors, autophagy-enhancing pathways, or gene/RNA therapeutics to target aging biology or multi-system age-related dysfunction.</p>
+
+<p><strong>In scope:</strong></p>
+<ul>
+<li>Platforms using plasma exchange, plasma-derived factors, or synthetic mimetics explicitly for healthspan or age-related indications.</li>
+<li>Autophagy-targeting therapeutics (e.g., mTORC1 modulation) with an aging focus.</li>
+<li>Gene and RNA therapeutics where the primary claim is modulation of aging pathways (e.g., sirtuins, FOXO, telomerase) for systemic or multi-organ benefits.</li>
+</ul>
+
+<p><strong>Out of scope:</strong> Standard gene therapies targeting single monogenic diseases unrelated to aging biology.</p>`,
+                notes: "This is a catch-all category for several distinct mechanistic approaches (plasma, autophagy, gene/RNA) that are grouped together because they all target hallmarks of aging. This will be covered in Deck 3A, Section 5.3. The boundary is whether aging is a primary framing or incidental."
+            },
+            {
+                title: "2.3 Measurement & Infrastructure Layer: Early Screening & MCED",
+                body: `<p><strong>Definition:</strong> Platforms providing early detection of cancer and other age-related diseases through imaging, multi-cancer early detection (MCED), or comprehensive screening that goes beyond standard of care, with explicit longevity or healthspan positioning.</p>
+
+<p><strong>In scope:</strong></p>
+<ul>
+<li>Full-body MRI and advanced imaging platforms marketed as longevity or preventive screening (e.g., Prenuvo, Q Bio, Neko Health).</li>
+<li>MCED blood tests and multi-omic panels explicitly integrated into longevity care models.</li>
+<li>Screening packages that combine imaging, advanced biomarkers, and AI-enabled risk stratification, positioned as healthspan or longevity diagnostics.</li>
+</ul>
+
+<p><strong>Out of scope:</strong> Routine screening programs (e.g., basic mammography, colonoscopy) delivered within standard primary care without explicit longevity positioning.</p>`,
+                notes: "Early screening and MCED are critical infrastructure for risk stratification but are undercapitalized (1.6% of disclosed capital). This will be covered in Deck 3A, Section 5.4. The distinction is whether the platform is being explicitly positioned as longevity-focused or just as a screening tool. This matters for go-to-market and patient expectations."
+            },
+            {
+                title: "2.3 Measurement & Infrastructure Layer: Biomarkers & Drug-Discovery Platforms",
+                body: `<p><strong>Biological age testing definition:</strong> Platforms and tests that estimate biological age or aging rate using biomarkers—epigenetic clocks, proteomic, metabolomic, glycan, or composite panels—and that position these measures as actionable tools for personalization of interventions.</p>
+
+<p><strong>In scope:</strong></p>
+<ul>
+<li>Direct-to-consumer and provider-facing biological age tests (e.g., epigenetic age, glycan age) used in longevity clinics or consumer programs.</li>
+<li>Multi-analyte biomarker platforms that explicitly brand themselves as aging or longevity measurement infrastructures.</li>
+<li>Companies offering aging-risk scores or dashboards intended to guide healthspan-focused decisions.</li>
+</ul>
+
+<p><strong>Drug-discovery platforms definition:</strong> AI-accelerated, multi-omics, or high-throughput platforms explicitly built to discover and optimize longevity or aging-focused therapeutics.</p>
+
+<p><strong>In scope:</strong></p>
+<ul>
+<li>Platforms whose core value proposition is rapid identification of geroprotective or aging-modulating compounds using AI and multi-omics.</li>
+<li>Aging-biology-specific discovery engines embedded within larger pharma or biotech portfolios, where aging pathways are a defined strategic focus.</li>
+</ul>`,
+                notes: "Biomarkers and drug-discovery platforms are foundational infrastructure. Biomarkers are a 'rail' that enables many other categories (they are how we measure if a therapy or intervention is working). Drug-discovery platforms will be significant value drivers. Both will be covered in Deck 3B (Sections 5.5 and in the context of Section 3.4). Note: biomarkers are undercapitalized relative to their strategic importance."
+            },
+            {
+                title: "2.4 Service & Consumer Layer: Metabolic & Hormone Optimization",
+                body: `<p><strong>Definition:</strong> Clinics and virtual platforms providing long-term programs for metabolic, endocrine, and hormonal optimization—typically involving lab testing, pharmacologic interventions, nutrition, and lifestyle—framed explicitly as longevity or healthspan offerings.</p>
+
+<p><strong>In scope:</strong></p>
+<ul>
+<li>Longevity clinics combining diagnostics (labs, imaging, wearables) with physician-guided protocols, often membership-based.</li>
+<li>Digital metabolic or hormone programs (including menopause and andropause care) explicitly positioned as improving long-term healthspan, not just symptom relief.</li>
+<li>Clinic networks where the brand promise is proactive aging optimization rather than routine primary care.</li>
+</ul>
+
+<p><strong>Out of scope:</strong></p>
+<ul>
+<li>Standard endocrinology and diabetes care within traditional health systems.</li>
+<li>Weight-loss clinics or GLP-1 programs without explicit aging or healthspan framing.</li>
+</ul>`,
+                notes: "This category includes both membership clinics and digital platforms. Metabolic and hormone optimization is one of the most accessible categories for underserved populations (compared to, say, cellular reprogramming). However, clinics are undercapitalized (3.5% of capital). This will be covered in Deck 3B, Section 5.6. The distinction between 'symptom relief' and 'healthspan optimization' is important but sometimes blurry in practice."
+            },
+            {
+                title: "2.4 Service & Consumer Layer: Cryopreservation & HBOT",
+                body: `<p><strong>Cryopreservation definition:</strong> Services that preserve human tissues, stem cells, gametes, or whole bodies using cryogenic techniques, marketed as future-oriented longevity or "backup" strategies.</p>
+
+<p><strong>In scope:</strong></p>
+<ul>
+<li>Cryonics providers offering whole-body or brain preservation for potential future revival.</li>
+<li>Stem-cell and tissue banks where longevity or future regenerative use is a core part of the narrative.</li>
+</ul>
+
+<p><strong>Hyperbaric oxygen therapy definition:</strong> HBOT services—chambers and protocols—marketed for anti-aging, cognitive enhancement, or general healthspan benefits, beyond traditional indications like wound healing or decompression sickness.</p>
+
+<p><strong>In scope:</strong></p>
+<ul>
+<li>Clinics and centers positioning HBOT as a core component of longevity or brain-health programs.</li>
+<li>HBOT integrated into comprehensive longevity memberships or packages.</li>
+</ul>`,
+                notes: "Cryopreservation is a niche category with high brand visibility but small actual market (both categories undercapitalized). These will be covered in Deck 3B, Sections 5.7–5.8. HBOT has some clinical evidence for wound healing and decompression sickness, but the longevity evidence base is less developed. This will be an important caveat in Section 5.8."
+            },
+            {
+                title: "2.4 Service & Consumer Layer: Virtual Male Hormone Care",
+                body: `<p><strong>Definition:</strong> Telemedicine platforms focused on male hormone optimization (e.g., testosterone replacement), metabolic health, and midlife performance, positioned within a longevity or long-term health framework.</p>
+
+<p><strong>In scope:</strong></p>
+<ul>
+<li>DTC or B2C platforms offering diagnostics, virtual consults, prescriptions, and monitoring for hormone optimization with explicit longevity framing.</li>
+<li>Services that integrate hormone care with broader metabolic and behavioral programs over multi-year horizons.</li>
+</ul>
+
+<p><strong>Out of scope:</strong> Single-issue "performance" or erectile-dysfunction platforms without a broader aging or healthspan narrative.</p>`,
+                notes: "Virtual male hormone care is included as a distinct category because it represents a significant market signal (capital and adoption), even though it's a subset of the broader metabolic/hormone optimization category. This will be covered in Deck 3B, Section 5.9. The distinction is whether the platform has a multi-year healthspan narrative or is just solving an immediate problem."
+            },
+            {
+                title: "2.5 Underserved Populations: How We Use the Term",
+                body: `<p>Throughout this report, "underserved populations" refers to individuals and communities who face structural barriers to accessing timely, high-quality, and culturally relevant health services, including but not limited to:</p>
+
+<ul>
+<li><strong>Rural communities</strong> with sparse primary-care coverage and limited specialist access.</li>
+<li><strong>Low-income populations</strong> in high-income countries, including Medicaid and uninsured groups.</li>
+<li><strong>Populations in fragile, conflict-affected, or low-resource settings</strong> where basic infrastructure is constrained.</li>
+<li><strong>Groups facing stigma or marginalization</strong> in mental health, chronic disease, or aging-related care.</li>
+</ul>
+
+<p>The report does not treat underserved populations as a separate "segment" within the longevity market. Instead, it asks how each category defined above could, in principle, be integrated into primary care and community mental health in these settings, and what structural barriers stand in the way.</p>`,
+                notes: "This definition is intentionally broad but specific. It's not just about low-income; it includes rural, fragile settings, and populations facing stigma. The key is that underserved populations are not treated as a market segment ('let's build a product for the poor'). Instead, the question is whether existing categories can be integrated into the systems where these populations actually access care. This framing shapes the entire report and will be the organizing principle for Sections 10–12 (playbooks for founders and investors)."
+            },
+            {
+                title: "End of Deck 1",
+                body: "<p style='font-size: 20px; color: #999; margin-top: 80px;'>Sections 1–2 complete. Key takeaways: (1) Longevity market is real and growing, but narrow and concentrated in therapeutics/platforms. (2) Geography is heavily skewed to North America. (3) Core risk is decoupling from primary care and mental health. (4) Nine-category taxonomy provides framework for analysis. (5) Underserved populations are central to the equity argument.</p><p style='font-size: 16px; color: #ccc; margin-top: 40px;'>Ready for Deck 2: Market Size & Capital Flows →</p>",
+                notes: "Deck 1 establishes the thesis and framework. The audience now understands: what longevity is (the nine categories), where capital is flowing, what the risks are, and why primary care integration matters. Deck 2 will zoom into market sizing and funding patterns, giving more granular numbers and category-specific insights. Decks 3A/3B will dive into each of the nine categories. Decks 4–6 will address ecosystem, failure patterns, playbooks, and methods."
+            }
+        ];
+
+        let currentSlide = 0;
+        let showNotes = true;
+
+        function renderSlide(index) {
+            const container = document.getElementById('slidesContainer');
+            const slide = slides[index];
+
+            let html = `
+                <div class="slide-container">
+                    <h2 class="slide-title">${slide.title}</h2>
+                    <div class="slide-body">${slide.body}</div>
+                    ${slide.notes ? `<div class="speaker-notes ${showNotes ? 'visible' : ''}">
+                        <h4>Speaker Notes</h4>
+                        <p>${slide.notes}</p>
+                    </div>` : ''}
+                </div>
+            `;
+
+            container.innerHTML = html;
+            updateNavigation();
+            updateProgress();
+        }
+
+        function updateNavigation() {
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === slides.length - 1;
+            document.getElementById('slideNumber').textContent = currentSlide + 1;
+            document.getElementById('totalSlides').textContent = slides.length;
+            document.getElementById('progressText').textContent = `Slide ${currentSlide + 1} of ${slides.length}`;
+        }
+
+        function updateProgress() {
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                renderSlide(currentSlide);
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                renderSlide(currentSlide);
+                window.scrollTo(0, 0);
+            }
+        }
+
+        document.getElementById('toggleNotes').addEventListener('click', function() {
+            showNotes = !showNotes;
+            const notes = document.querySelectorAll('.speaker-notes');
+            notes.forEach(note => {
+                if (showNotes) {
+                    note.classList.add('visible');
+                } else {
+                    note.classList.remove('visible');
+                }
+            });
+            this.classList.toggle('active');
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+        });
+
+        // Initialize
+        renderSlide(0);
+    </script>
+</body>
+</html>
